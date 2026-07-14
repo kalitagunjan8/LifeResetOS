@@ -1,28 +1,55 @@
 package com.zerosepaisa.liferesetos.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import com.zerosepaisa.liferesetos.navigation.Routes
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.zerosepaisa.liferesetos.feature.home.HomeScreen
 import com.zerosepaisa.liferesetos.feature.onboarding.WelcomeScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
+import com.zerosepaisa.liferesetos.viewmodel.MainViewModel
 
 @Composable
 fun AppNavigation() {
 
     val navController = rememberNavController()
+    val viewModel: MainViewModel = viewModel()
+    val isFirstLaunch by viewModel.isFirstLaunch.collectAsState()
 
     NavHost(
         navController = navController,
-        startDestination = Routes.WELCOME
+        startDestination = Routes.SPLASH
     ) {
+
+        composable(Routes.SPLASH) {
+            LaunchedEffect(isFirstLaunch) {
+                val knownValue = isFirstLaunch
+                if (knownValue != null) {
+                    val destination = if (knownValue) Routes.WELCOME else Routes.HOME
+                    navController.navigate(destination) {
+                        popUpTo(Routes.SPLASH) {
+                            inclusive = true
+                        }
+                    }
+                }
+            }
+        }
 
         composable(Routes.WELCOME) {
 
             WelcomeScreen(
                 onBeginClick = {
-                    navController.navigate(Routes.HOME)
+                    viewModel.completeOnboarding()
+
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(Routes.WELCOME) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
 
