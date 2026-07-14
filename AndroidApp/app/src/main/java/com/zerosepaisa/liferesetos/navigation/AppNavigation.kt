@@ -2,15 +2,15 @@ package com.zerosepaisa.liferesetos.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.zerosepaisa.liferesetos.navigation.Routes
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.zerosepaisa.liferesetos.feature.home.HomeScreen
 import com.zerosepaisa.liferesetos.feature.onboarding.WelcomeScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.collectAsState
+import com.zerosepaisa.liferesetos.navigation.Routes
 import com.zerosepaisa.liferesetos.viewmodel.MainViewModel
 
 @Composable
