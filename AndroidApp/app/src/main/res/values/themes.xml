@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.LifeResetOS" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Splash Theme -->
+    <style name="Theme.LifeResetOS" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+
+        <!-- Android 12+ animated icon -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+
+        <!-- Theme after splash -->
+        <item name="postSplashScreenTheme">@style/Theme.LifeResetOS.Main</item>
+    </style>
+
+    <!-- Main App Theme -->
+    <style name="Theme.LifeResetOS.Main"
+        parent="android:Theme.Material.Light.NoActionBar" />
+
 </resources>
