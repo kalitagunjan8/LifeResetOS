@@ -12,6 +12,7 @@ import com.zerosepaisa.liferesetos.feature.home.HomeScreen
 import com.zerosepaisa.liferesetos.feature.onboarding.WelcomeScreen
 import com.zerosepaisa.liferesetos.navigation.Routes
 import com.zerosepaisa.liferesetos.viewmodel.MainViewModel
+import com.zerosepaisa.liferesetos.feature.mission.MissionScreen
 
 @Composable
 fun AppNavigation() {
@@ -43,21 +44,23 @@ fun AppNavigation() {
 
             WelcomeScreen(
                 onBeginClick = {
-                    viewModel.completeOnboarding()
-
-                    navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.WELCOME) {
-                            inclusive = true
-                        }
-                    }
+                    navController.navigate(Routes.MISSION)
                 }
             )
 
+
+        }
+        composable(Routes.MISSION) {
+            MissionScreen(
+                onContinue = {
+                    navController.navigate(Routes.HOME)
+                }
+            )
         }
 
         composable(Routes.HOME) {
 
-            HomeScreen()
+            MainScaffold()
 
         }
 
