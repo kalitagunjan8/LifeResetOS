@@ -53,7 +53,14 @@ fun AppNavigation() {
         composable(Routes.MISSION) {
             MissionScreen(
                 onContinue = {
-                    navController.navigate(Routes.HOME)
+
+                    viewModel.completeOnboarding()
+
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(0) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

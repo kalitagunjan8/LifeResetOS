@@ -9,12 +9,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier
 )
 {
+    val viewModel: HomeViewModel = viewModel()
+    val mission by viewModel.activeMission.collectAsState()
 
     Column(
         modifier = modifier
@@ -35,7 +40,7 @@ fun HomeScreen(
 
         DashboardCard(
             title = "🎯 Current Mission",
-            value = "Build Financial Freedom"
+            value = mission?.title ?: "No Mission Yet"
         )
 
         DashboardCard(

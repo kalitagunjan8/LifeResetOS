@@ -68,9 +68,13 @@ fun MissionScreen(
         )
 
         Button(
-            onClick = onContinue,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+            onClick = {
+                viewModel.saveMission {
+                    onContinue()
+                }
+            }
+        )
+        {
             Text("Continue")
         }
     }
