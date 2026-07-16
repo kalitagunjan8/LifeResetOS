@@ -1,4 +1,4 @@
-package com.zerosepaisa.liferesetos.feature.home
+package com.zerosepaisa.liferesetos.feature.journey
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+class JourneyViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 

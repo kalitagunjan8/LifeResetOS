@@ -20,6 +20,7 @@ fun HomeScreen(
 {
     val viewModel: HomeViewModel = viewModel()
     val mission by viewModel.activeMission.collectAsState()
+    val goals by viewModel.activeGoals.collectAsState()
 
     Column(
         modifier = modifier
@@ -45,7 +46,7 @@ fun HomeScreen(
 
         DashboardCard(
             title = "📈 Active Goals",
-            value = "0"
+            value = goals.size.toString()
         )
 
         DashboardCard(

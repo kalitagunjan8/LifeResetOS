@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.Scaffold
+import androidx.navigation.NavHostController
 import com.zerosepaisa.liferesetos.feature.focus.FocusScreen
 import com.zerosepaisa.liferesetos.feature.home.HomeScreen
 import com.zerosepaisa.liferesetos.feature.journey.JourneyScreen
@@ -12,7 +13,9 @@ import com.zerosepaisa.liferesetos.navigation.bottomnav.BottomNavItem
 import com.zerosepaisa.liferesetos.navigation.bottomnav.BottomNavigationBar
 
 @Composable
-fun MainScaffold() {
+fun MainScaffold(
+    navController: NavHostController
+) {
 
     var currentRoute by remember {
         mutableStateOf(BottomNavItem.Home.route)
@@ -41,7 +44,13 @@ fun MainScaffold() {
 
             BottomNavItem.Journey.route -> {
                 JourneyScreen(
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.padding(innerPadding),
+                    onAddGoalClick = {
+                        navController.navigate(Routes.goalsRoute())
+                    },
+                    onGoalClick = { goalId ->
+                        navController.navigate(Routes.goalsRoute(goalId))
+                    }
                 )
             }
 

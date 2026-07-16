@@ -241,7 +241,9 @@ Implemented
 
 ✓ Home
 
-✓ Journey (placeholder)
+✓ Journey (live — Mission + Goals list, read-only)
+
+✓ Goals (Add + Edit Goal form; reached via Journey FAB or tapping a Goal card; route: Routes.GOALS with optional goalId)
 
 ✓ Focus (placeholder)
 
@@ -286,6 +288,8 @@ Tasks
 Progress
 
 Timeline
+
+Current state (v0.4): read-only. Displays active Mission and list of active Goals (title, category, priority, status). No editing yet — CRUD is a separate future milestone.
 
 The Home Dashboard is only a summary.
 
@@ -465,13 +469,24 @@ MVP Release
 
 Connect Home Dashboard to live Room data.
 
+✓ Mission — done
+✓ Active Goals — done (v0.4)
+☐ Today's Actions — blocked on Tasks (v0.6)
+☐ Focus Score — blocked on Focus Sessions (v0.7)
+
 2.
 
 Build Journey screen.
 
+✓ done (v0.4) — read-only Mission + Goals list
+
 3.
 
-Goals CRUD.
+Goals CRUD. ✓ complete (v0.4) — Create, Edit, Delete all done
+
+✓ Create (Add Goal) — done (v0.4), via dedicated Goals screen reached from Journey's FAB
+✓ Edit — done (v0.4), tap a Goal card in Journey; reuses GoalsScreen in Edit mode
+✓ Delete — done (v0.4), Delete button on Edit Goal screen with confirmation dialog
 
 4.
 

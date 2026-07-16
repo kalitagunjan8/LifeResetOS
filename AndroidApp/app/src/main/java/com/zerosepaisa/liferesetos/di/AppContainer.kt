@@ -3,6 +3,7 @@ package com.zerosepaisa.liferesetos.di
 import android.content.Context
 import androidx.room.Room
 import com.zerosepaisa.liferesetos.data.local.AppDatabase
+import com.zerosepaisa.liferesetos.data.repository.GoalRepository
 import com.zerosepaisa.liferesetos.data.repository.MissionRepository
 
 class AppContainer(context: Context) {
@@ -15,5 +16,9 @@ class AppContainer(context: Context) {
 
     val missionRepository = MissionRepository(
         database.missionDao()
+    )
+
+    val goalRepository = GoalRepository(
+        database.goalDao()
     )
 }

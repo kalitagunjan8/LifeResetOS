@@ -5,10 +5,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.zerosepaisa.liferesetos.feature.home.HomeScreen
+import com.zerosepaisa.liferesetos.feature.goals.GoalsScreen
 import com.zerosepaisa.liferesetos.feature.onboarding.WelcomeScreen
 import com.zerosepaisa.liferesetos.navigation.Routes
 import com.zerosepaisa.liferesetos.viewmodel.MainViewModel
@@ -67,7 +70,30 @@ fun AppNavigation() {
 
         composable(Routes.HOME) {
 
-            MainScaffold()
+            MainScaffold(
+                navController = navController
+            )
+
+        }
+
+        composable(
+            route = Routes.GOALS,
+            arguments = listOf(
+                navArgument(Routes.GOAL_ID_ARG) {
+                    type = NavType.LongType
+                    defaultValue = -1L
+                }
+            )
+        ) { backStackEntry ->
+
+            val goalId = backStackEntry.arguments?.getLong(Routes.GOAL_ID_ARG) ?: -1L
+
+            GoalsScreen(
+                goalId = if (goalId == -1L) null else goalId,
+                onGoalSaved = {
+                    navController.popBackStack()
+                }
+            )
 
         }
 

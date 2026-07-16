@@ -13,6 +13,44 @@ All notable changes to Life Reset OS will be documented here.
 
 ---
 
+## v0.4 (in progress) - Dynamic Home Dashboard
+
+Confirmed building and running cleanly — 2026-07-17
+
+### Added
+
+- GoalRepository (was referenced in v0.3.2 changelog but missing from codebase; created now)
+- GoalRepository registered in AppContainer
+- HomeViewModel now streams live Active Goals from Room alongside Mission
+- JourneyViewModel (mirrors HomeViewModel pattern)
+- JourneyScreen now shows live Mission + list of active Goals (read-only)
+- Routes.GOALS route added to navigation
+- GoalsViewModel (Create flow only)
+- GoalsScreen rebuilt as an Add Goal form (title, description, why, category, priority)
+- Journey screen now has a FAB that navigates to the Add Goal screen
+- MainScaffold now receives NavHostController to support navigating out of bottom-nav tabs
+- Routes.GOALS now accepts an optional goalId argument (Routes.goalsRoute helper)
+- GoalsScreen now supports Edit mode: pre-fills from an existing Goal, button reads "Update Goal"
+- GoalsViewModel: added loadGoal() and updateGoal() (preserves status/targetDate/createdAt via copy())
+- Journey Goal cards are now tappable, opening the Goal in Edit mode
+- GoalsViewModel: added deleteGoal()
+- GoalsScreen (Edit mode): added Delete Goal button with confirmation dialog before deleting
+
+### Goals CRUD status
+
+Create, Edit, and Delete are all complete as of v0.4. No deferred items remain for Goals CRUD.
+
+### Fixed
+
+- Home Dashboard "Active Goals" card no longer hardcoded to "0"; now reflects live goal count
+
+### Remaining for v0.4
+
+- Today's Actions card (depends on Tasks, not yet built)
+- Focus Score card (depends on Focus Sessions, not yet built)
+
+---
+
 ## v0.3.2 - Mission & Goal Foundation
 
 Released
