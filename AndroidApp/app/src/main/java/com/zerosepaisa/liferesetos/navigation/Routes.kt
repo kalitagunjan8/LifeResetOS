@@ -9,6 +9,8 @@ object Routes {
     const val GOAL_ID_ARG = "goalId"
     const val GOALS = "goals?goalId={goalId}"
 
+    const val GOAL_DETAIL = "goalDetail/{goalId}"
+
     /**
      * Builds a navigable route string.
      * Pass no goalId (or null) for Create mode.
@@ -16,4 +18,10 @@ object Routes {
      */
     fun goalsRoute(goalId: Long? = null): String =
         if (goalId != null) "goals?goalId=$goalId" else "goals"
+
+    /**
+     * Route to the Goal Detail screen (owns that Goal's Task list, per ADR-010).
+     */
+    fun goalDetailRoute(goalId: Long): String =
+        "goalDetail/$goalId"
 }

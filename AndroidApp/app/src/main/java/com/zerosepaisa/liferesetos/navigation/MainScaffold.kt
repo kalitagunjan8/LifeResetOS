@@ -49,7 +49,7 @@ fun MainScaffold(
                         navController.navigate(Routes.goalsRoute())
                     },
                     onGoalClick = { goalId ->
-                        navController.navigate(Routes.goalsRoute(goalId))
+                        navController.navigate(Routes.goalDetailRoute(goalId))
                     }
                 )
             }

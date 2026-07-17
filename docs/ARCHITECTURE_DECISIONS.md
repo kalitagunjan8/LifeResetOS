@@ -197,3 +197,27 @@ Repositories should expose Room data rather than maintaining duplicate state.
 Status
 
 Accepted
+
+---
+
+## ADR-010
+
+Date
+
+2026-07-17
+
+Decision
+
+Tapping a Goal opens a dedicated Goal Detail screen. This screen displays the Goal's information and owns that Goal's Task list and Task CRUD.
+
+Journey remains a high-level operational dashboard: it lists Missions and Goals for orientation, but is not itself a workspace for nested CRUD.
+
+Editing a Goal's own fields (title, description, why, category, priority) and deleting a Goal continue to happen on the existing Goals screen (Create/Edit/Delete), reached from Goal Detail via an explicit Edit action — Goal Detail does not duplicate that form.
+
+Reason
+
+Tasks belong to Goals (ADR-004). As Task CRUD is introduced, it needs a permanent home. Keeping Journey as a summary/orientation view and pushing ownership of a Goal's operational detail (its Tasks) into a dedicated screen matches the Mission → Goals → Tasks hierarchy and avoids Journey becoming an overloaded nested-CRUD surface.
+
+Status
+
+Accepted

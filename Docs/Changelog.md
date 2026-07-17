@@ -40,6 +40,28 @@ Confirmed building and running cleanly — 2026-07-17
 
 Create, Edit, and Delete are all complete as of v0.4. No deferred items remain for Goals CRUD.
 
+---
+
+## v0.5 (in progress) - Tasks
+
+### Architecture
+
+- ADR-010: tapping a Goal now opens a dedicated Goal Detail screen, which owns that Goal's Task list and Task CRUD. Journey stays a high-level dashboard only. Editing/deleting the Goal's own fields still happens on the existing Goals screen, reached from Goal Detail via an Edit button.
+
+### Added
+
+- Task entity (FK to Goal, cascade delete, per ADR-004: Tasks never belong directly to a Mission)
+- TaskDao, TaskRepository (same pattern as Goal's)
+- AppDatabase: version bumped 1 → 2 to add the tasks table. Added `fallbackToDestructiveMigration()` for both database builders since there's no released install base yet — this must be replaced with a real Migration before release
+- Routes.GOAL_DETAIL (route + goalDetailRoute() helper)
+- GoalDetailViewModel, GoalDetailScreen: shows Goal info, live Task list, Add Task dialog, complete/incomplete checkbox toggle, Edit Goal button
+- Journey's onGoalClick now opens Goal Detail instead of jumping straight into Edit
+
+### Deferred (intentionally, per incremental workflow)
+
+- Edit Task
+- Delete Task
+
 ### Fixed
 
 - Home Dashboard "Active Goals" card no longer hardcoded to "0"; now reflects live goal count

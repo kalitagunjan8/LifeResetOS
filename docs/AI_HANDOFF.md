@@ -243,7 +243,9 @@ Implemented
 
 ✓ Journey (live — Mission + Goals list, read-only)
 
-✓ Goals (Add + Edit Goal form; reached via Journey FAB or tapping a Goal card; route: Routes.GOALS with optional goalId)
+✓ Goals (Add + Edit Goal form; reached via Journey FAB or Goal Detail's Edit button; route: Routes.GOALS with optional goalId)
+
+✓ Goal Detail (Goal info + live Task list, Add Task dialog, complete/incomplete toggle; route: Routes.GOAL_DETAIL; per ADR-010)
 
 ✓ Focus (placeholder)
 
@@ -485,12 +487,14 @@ Build Journey screen.
 Goals CRUD. ✓ complete (v0.4) — Create, Edit, Delete all done
 
 ✓ Create (Add Goal) — done (v0.4), via dedicated Goals screen reached from Journey's FAB
-✓ Edit — done (v0.4), tap a Goal card in Journey; reuses GoalsScreen in Edit mode
+✓ Edit — done (v0.4), reached via Goal Detail's Edit button (was direct tap-to-edit; superseded by ADR-010); reuses GoalsScreen in Edit mode
 ✓ Delete — done (v0.4), Delete button on Edit Goal screen with confirmation dialog
 
 4.
 
-Tasks.
+Tasks. ✓ Create + View + Complete toggle done (v0.4), via new Goal Detail screen (ADR-010)
+☐ Edit Task — deferred
+☐ Delete Task — deferred
 
 ---
 
