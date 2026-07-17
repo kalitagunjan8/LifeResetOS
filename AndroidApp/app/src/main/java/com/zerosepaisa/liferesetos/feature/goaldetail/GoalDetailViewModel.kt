@@ -74,4 +74,18 @@ class GoalDetailViewModel(
             )
         }
     }
+
+    fun updateTask(task: Task, newTitle: String) {
+        if (newTitle.isBlank()) return
+
+        viewModelScope.launch {
+            taskRepository.updateTask(task.copy(title = newTitle))
+        }
+    }
+
+    fun deleteTask(task: Task) {
+        viewModelScope.launch {
+            taskRepository.deleteTask(task)
+        }
+    }
 }

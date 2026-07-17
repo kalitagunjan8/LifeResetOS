@@ -56,11 +56,12 @@ Create, Edit, and Delete are all complete as of v0.4. No deferred items remain f
 - Routes.GOAL_DETAIL (route + goalDetailRoute() helper)
 - GoalDetailViewModel, GoalDetailScreen: shows Goal info, live Task list, Add Task dialog, complete/incomplete checkbox toggle, Edit Goal button
 - Journey's onGoalClick now opens Goal Detail instead of jumping straight into Edit
+- GoalDetailViewModel: added updateTask() and deleteTask()
+- GoalDetailScreen: task rows are now tappable, opening an Edit Task dialog (pre-filled title, Update button, Delete Task button with confirmation)
 
-### Deferred (intentionally, per incremental workflow)
+### Tasks status
 
-- Edit Task
-- Delete Task
+Create, View, Complete toggle, Edit, and Delete are all complete as of v0.5. No deferred items remain for Task CRUD.
 
 ### Fixed
 

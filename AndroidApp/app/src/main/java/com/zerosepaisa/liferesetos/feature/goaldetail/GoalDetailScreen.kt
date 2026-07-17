@@ -1,5 +1,6 @@
 package com.zerosepaisa.liferesetos.feature.goaldetail
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -7,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
@@ -49,6 +51,8 @@ fun GoalDetailScreen(
     var goal by remember { mutableStateOf<Goal?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var showAddTaskDialog by remember { mutableStateOf(false) }
+    var editingTask by remember { mutableStateOf<Task?>(null) }
+    var deleteConfirmTask by remember { mutableStateOf<Task?>(null) }
 
     // Initial load + start observing this Goal's Tasks.
     LaunchedEffect(goalId) {
@@ -160,7 +164,8 @@ fun GoalDetailScreen(
                 items(tasks, key = { it.id }) { task ->
                     TaskRow(
                         task = task,
-                        onToggle = { viewModel.toggleComplete(task) }
+                        onToggle = { viewModel.toggleComplete(task) },
+                        onClick = { editingTask = task }
                     )
                 }
             }
@@ -176,15 +181,59 @@ fun GoalDetailScreen(
             }
         )
     }
+
+    editingTask?.let { task ->
+        EditTaskDialog(
+            task = task,
+            onDismiss = { editingTask = null },
+            onUpdate = { newTitle ->
+                viewModel.updateTask(task, newTitle)
+                editingTask = null
+            },
+            onDeleteRequest = {
+                deleteConfirmTask = task
+                editingTask = null
+            }
+        )
+    }
+
+    deleteConfirmTask?.let { task ->
+        AlertDialog(
+            onDismissRequest = { deleteConfirmTask = null },
+            title = { Text("Delete this Task?") },
+            text = { Text("This can't be undone.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteTask(task)
+                        deleteConfirmTask = null
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { deleteConfirmTask = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
 
 @Composable
 private fun TaskRow(
     task: Task,
-    onToggle: () -> Unit
+    onToggle: () -> Unit,
+    onClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
@@ -236,6 +285,69 @@ private fun AddTaskDialog(
                 }
             ) {
                 Text("Add")
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@Composable
+private fun EditTaskDialog(
+    task: Task,
+    onDismiss: () -> Unit,
+    onUpdate: (String) -> Unit,
+    onDeleteRequest: () -> Unit
+) {
+    var title by remember { mutableStateOf(task.title) }
+    var showError by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit Task") },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = {
+                        title = it
+                        if (it.isNotBlank()) showError = false
+                    },
+                    label = { Text("Title") },
+                    isError = showError,
+                    supportingText = {
+                        if (showError) Text("Title is required")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedButton(
+                    onClick = onDeleteRequest,
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Delete Task")
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (title.isBlank()) {
+                        showError = true
+                    } else {
+                        onUpdate(title.trim())
+                    }
+                }
+            ) {
+                Text("Update")
             }
         },
         dismissButton = {

@@ -473,7 +473,7 @@ Connect Home Dashboard to live Room data.
 
 ✓ Mission — done
 ✓ Active Goals — done (v0.4)
-☐ Today's Actions — blocked on Tasks (v0.6)
+☐ Today's Actions — unblocked (Tasks CRUD complete as of v0.5); not yet wired to Home Dashboard
 ☐ Focus Score — blocked on Focus Sessions (v0.7)
 
 2.
@@ -493,8 +493,8 @@ Goals CRUD. ✓ complete (v0.4) — Create, Edit, Delete all done
 4.
 
 Tasks. ✓ Create + View + Complete toggle done (v0.4), via new Goal Detail screen (ADR-010)
-☐ Edit Task — deferred
-☐ Delete Task — deferred
+✓ Edit Task — done (v0.5), tap a task row to open an Edit Task dialog
+✓ Delete Task — done (v0.5), Delete button inside Edit Task dialog, with confirmation
 
 ---
 
