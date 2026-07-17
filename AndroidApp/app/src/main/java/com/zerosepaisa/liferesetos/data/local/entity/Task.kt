@@ -52,5 +52,12 @@ data class Task(
     /**
      * Set when the Task is marked complete; cleared if un-marked.
      */
-    val completedAt: Long? = null
+    val completedAt: Long? = null,
+
+    /**
+     * The day the user intends to work on this Task (per ADR-011).
+     * This is a planning date, not a hard deadline — hence "scheduled"
+     * rather than "due".
+     */
+    val scheduledDate: Long? = null
 )

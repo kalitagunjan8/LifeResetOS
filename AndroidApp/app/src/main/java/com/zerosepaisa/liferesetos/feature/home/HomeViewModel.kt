@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.zerosepaisa.liferesetos.data.local.AppDatabase
 import com.zerosepaisa.liferesetos.data.local.entity.Goal
 import com.zerosepaisa.liferesetos.data.local.entity.Mission
+import com.zerosepaisa.liferesetos.data.local.entity.Task
 import com.zerosepaisa.liferesetos.data.repository.GoalRepository
 import com.zerosepaisa.liferesetos.data.repository.MissionRepository
+import com.zerosepaisa.liferesetos.data.repository.TaskRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,11 +27,18 @@ class HomeViewModel(
         AppDatabase.getInstance(application).goalDao()
     )
 
+    private val taskRepository = TaskRepository(
+        AppDatabase.getInstance(application).taskDao()
+    )
+
     private val _activeMission = MutableStateFlow<Mission?>(null)
     val activeMission: StateFlow<Mission?> = _activeMission.asStateFlow()
 
     private val _activeGoals = MutableStateFlow<List<Goal>>(emptyList())
     val activeGoals: StateFlow<List<Goal>> = _activeGoals.asStateFlow()
+
+    private val _todaysTasks = MutableStateFlow<List<Task>>(emptyList())
+    val todaysTasks: StateFlow<List<Task>> = _todaysTasks.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -41,6 +50,12 @@ class HomeViewModel(
         viewModelScope.launch {
             goalRepository.getActiveGoals().collect {
                 _activeGoals.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            taskRepository.getTodaysTasks().collect {
+                _todaysTasks.value = it
             }
         }
     }

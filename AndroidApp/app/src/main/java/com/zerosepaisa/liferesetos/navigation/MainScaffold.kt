@@ -38,7 +38,10 @@ fun MainScaffold(
 
             BottomNavItem.Home.route -> {
                 HomeScreen(
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.padding(innerPadding),
+                    onTodaysActionsClick = {
+                        navController.navigate(Routes.TODAYS_ACTIONS)
+                    }
                 )
             }
 

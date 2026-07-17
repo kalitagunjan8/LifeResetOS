@@ -11,6 +11,8 @@ object Routes {
 
     const val GOAL_DETAIL = "goalDetail/{goalId}"
 
+    const val TODAYS_ACTIONS = "todaysActions"
+
     /**
      * Builds a navigable route string.
      * Pass no goalId (or null) for Create mode.

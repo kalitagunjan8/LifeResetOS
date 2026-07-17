@@ -247,6 +247,8 @@ Implemented
 
 ✓ Goal Detail (Goal info + live Task list, Add Task dialog, complete/incomplete toggle; route: Routes.GOAL_DETAIL; per ADR-010)
 
+✓ Today's Actions (progress + list of today's scheduled Tasks, reuses shared TaskRowItem; route: Routes.TODAYS_ACTIONS; per ADR-011)
+
 ✓ Focus (placeholder)
 
 ✓ Profile (placeholder)
@@ -473,8 +475,8 @@ Connect Home Dashboard to live Room data.
 
 ✓ Mission — done
 ✓ Active Goals — done (v0.4)
-☐ Today's Actions — unblocked (Tasks CRUD complete as of v0.5); not yet wired to Home Dashboard
-☐ Focus Score — blocked on Focus Sessions (v0.7)
+✓ Today's Actions — done (v0.4.2). scheduledDate added to Task (ADR-011); shows "X / Y Completed", tappable, opens dedicated Today's Actions screen
+☐ Focus Score — blocked on Focus Sessions (not yet started)
 
 2.
 

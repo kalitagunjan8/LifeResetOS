@@ -1,5 +1,6 @@
 package com.zerosepaisa.liferesetos.feature.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -15,12 +16,17 @@ import androidx.compose.runtime.collectAsState
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onTodaysActionsClick: () -> Unit = {}
 )
 {
     val viewModel: HomeViewModel = viewModel()
     val mission by viewModel.activeMission.collectAsState()
     val goals by viewModel.activeGoals.collectAsState()
+    val todaysTasks by viewModel.todaysTasks.collectAsState()
+
+    val completedCount = todaysTasks.count { it.isCompleted }
+    val totalCount = todaysTasks.size
 
     Column(
         modifier = modifier
@@ -51,7 +57,8 @@ fun HomeScreen(
 
         DashboardCard(
             title = "☑ Today's Actions",
-            value = "0 / 0 Completed"
+            value = "$completedCount / $totalCount Completed",
+            onClick = onTodaysActionsClick
         )
 
         DashboardCard(
@@ -66,11 +73,20 @@ fun HomeScreen(
 @Composable
 private fun DashboardCard(
     title: String,
-    value: String
+    value: String,
+    onClick: (() -> Unit)? = null
 ) {
 
+    val cardModifier = if (onClick != null) {
+        Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    } else {
+        Modifier.fillMaxWidth()
+    }
+
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = cardModifier,
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {

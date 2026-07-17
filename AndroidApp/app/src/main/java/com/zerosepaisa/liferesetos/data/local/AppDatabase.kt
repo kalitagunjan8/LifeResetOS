@@ -18,7 +18,7 @@ import com.zerosepaisa.liferesetos.data.local.entity.Mission
         Mission::class,
         Task::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

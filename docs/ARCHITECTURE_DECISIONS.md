@@ -221,3 +221,24 @@ Tasks belong to Goals (ADR-004). As Task CRUD is introduced, it needs a permanen
 Status
 
 Accepted
+---
+
+## ADR-011
+
+Date
+
+2026-07-17
+
+Decision
+
+Task gets a new nullable field, `scheduledDate: Long?`, rather than `dueDate`. "Today's Actions" on the Home Dashboard is defined as Tasks whose `scheduledDate` falls within the current calendar day — not "all incomplete Tasks."
+
+The Home Dashboard's Today's Actions card is tappable and shows "X / Y Completed". Tapping it opens a dedicated Today's Actions screen showing today's scheduled Tasks with their completion toggle and progress, reusing shared Task row UI where possible.
+
+Reason
+
+Life Reset OS is a planning system, not just a deadline tracker — `scheduledDate` reflects when the user intends to work on something, which is a distinct concept from a hard deadline. Naming it this way now avoids a confusing rename or a second field later if deadlines are introduced separately.
+
+Status
+
+Accepted

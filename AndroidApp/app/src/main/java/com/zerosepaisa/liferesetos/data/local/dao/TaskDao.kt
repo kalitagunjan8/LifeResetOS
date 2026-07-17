@@ -26,6 +26,11 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE goalId = :goalId ORDER BY createdAt DESC")
     fun getTasksForGoal(goalId: Long): Flow<List<Task>>
 
+    @Query(
+        "SELECT * FROM tasks WHERE scheduledDate >= :startMillis AND scheduledDate <= :endMillis ORDER BY createdAt DESC"
+    )
+    fun getTasksScheduledBetween(startMillis: Long, endMillis: Long): Flow<List<Task>>
+
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     suspend fun getTaskById(taskId: Long): Task?
 }

@@ -63,6 +63,33 @@ Create, Edit, and Delete are all complete as of v0.4. No deferred items remain f
 
 Create, View, Complete toggle, Edit, and Delete are all complete as of v0.5. No deferred items remain for Task CRUD.
 
+---
+
+## v0.4.2 - Home Dashboard Integration (Today's Actions)
+
+### Architecture
+
+- ADR-011: Task gets `scheduledDate: Long?` (not `dueDate` — this is a planning system, not a deadline tracker). "Today's Actions" = Tasks whose scheduledDate falls within the current calendar day. The Home card is tappable and opens a dedicated Today's Actions screen.
+
+### Added
+
+- Task.scheduledDate field
+- AppDatabase: version bumped 2 → 3 for the new column (still `fallbackToDestructiveMigration()` — pre-release, no real migration written yet)
+- TaskDao.getTasksScheduledBetween(), TaskRepository.getTodaysTasks()
+- DateUtils (util/DateUtils.kt): start/end-of-day boundary helpers using java.util.Calendar
+- Add/Edit Task dialogs now include a date picker (Material3 DatePickerDialog) to set/clear a Task's scheduledDate
+- Extracted TaskRowItem into feature/common/ so it's shared between Goal Detail and the new Today's Actions screen, instead of duplicated
+- HomeViewModel now streams today's scheduled Tasks; Home Dashboard's Today's Actions card shows a real "X / Y Completed" count and is tappable
+- Routes.TODAYS_ACTIONS, TodaysActionsViewModel, TodaysActionsScreen: shows progress bar + today's scheduled Tasks with a completion toggle (no edit/delete here — that stays owned by Goal Detail per ADR-010)
+
+### Home Dashboard status
+
+Mission, Active Goals, and Today's Actions are all live. Focus Score remains a placeholder, blocked on Focus Sessions (not yet started).
+
+### Fixed
+
+- TaskRowItem now displays a Task's scheduledDate (e.g. "Fri, Jul 17") beneath its title when one is set. Previously the date was saved correctly but never shown anywhere, so there was no visual confirmation it had been set.
+
 ### Fixed
 
 - Home Dashboard "Active Goals" card no longer hardcoded to "0"; now reflects live goal count

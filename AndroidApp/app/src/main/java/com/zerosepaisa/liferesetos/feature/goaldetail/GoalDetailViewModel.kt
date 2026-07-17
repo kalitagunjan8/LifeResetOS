@@ -51,14 +51,15 @@ class GoalDetailViewModel(
         }
     }
 
-    fun addTask(goalId: Long, title: String) {
+    fun addTask(goalId: Long, title: String, scheduledDate: Long?) {
         if (title.isBlank()) return
 
         viewModelScope.launch {
             taskRepository.saveTask(
                 Task(
                     goalId = goalId,
-                    title = title
+                    title = title,
+                    scheduledDate = scheduledDate
                 )
             )
         }
@@ -75,11 +76,16 @@ class GoalDetailViewModel(
         }
     }
 
-    fun updateTask(task: Task, newTitle: String) {
+    fun updateTask(task: Task, newTitle: String, scheduledDate: Long?) {
         if (newTitle.isBlank()) return
 
         viewModelScope.launch {
-            taskRepository.updateTask(task.copy(title = newTitle))
+            taskRepository.updateTask(
+                task.copy(
+                    title = newTitle,
+                    scheduledDate = scheduledDate
+                )
+            )
         }
     }
 
