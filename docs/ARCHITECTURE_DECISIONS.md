@@ -242,3 +242,31 @@ Life Reset OS is a planning system, not just a deadline tracker — `scheduledDa
 Status
 
 Accepted
+
+---
+
+## ADR-012
+
+Date
+
+2026-07-17
+
+Decision
+
+Focus Sessions start only from Today's Actions — there is no global Task picker. A Focus Session is always tied to one of today's scheduled Tasks. If no Tasks are scheduled today, the Focus screen guides the user to Today's Actions instead of allowing arbitrary Task selection.
+
+Duration selection offers presets (15, 25 default, 45, 60 minutes) as single-tap start buttons, plus a custom minutes input. Both paths use the same timer/session logic.
+
+For v0.5.0, SessionStatus supports only COMPLETED and ENDED_EARLY. BROKEN is defined in the enum now for schema forward-compatibility, but nothing sets it yet — true interruption detection (foreground service, lifecycle tracking) is deferred to a future milestone and should not require a schema change when it lands.
+
+Focus Score is computed as `round(actualDurationSeconds / plannedDurationSeconds * 100)`, clamped to 0–100. A naturally COMPLETED session always scores 100. An ENDED_EARLY session scores the percentage of planned time actually spent focused.
+
+The v0.5.0 timer runs in-process via a ViewModel coroutine (no foreground service). It does not survive process death or app kill — only backgrounding within normal Android lifecycle limits. This is an accepted MVP limitation, not an oversight.
+
+Reason
+
+Per the Focus Philosophy (Focus Sessions belong to Tasks; they measure execution, not planning) and the decision to keep Today's Actions as the single source of "what to work on today," letting Focus Sessions pull from anywhere would duplicate that concept. The Focus Score formula isn't specified in LIFE_OS_SPEC.md, so a concrete definition is recorded here rather than left implicit in code.
+
+Status
+
+Accepted

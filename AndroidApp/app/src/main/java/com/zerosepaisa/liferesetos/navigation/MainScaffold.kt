@@ -41,6 +41,9 @@ fun MainScaffold(
                     modifier = Modifier.padding(innerPadding),
                     onTodaysActionsClick = {
                         navController.navigate(Routes.TODAYS_ACTIONS)
+                    },
+                    onFocusScoreClick = {
+                        currentRoute = BottomNavItem.Focus.route
                     }
                 )
             }
@@ -59,7 +62,10 @@ fun MainScaffold(
 
             BottomNavItem.Focus.route -> {
                 FocusScreen(
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.padding(innerPadding),
+                    onGoToTodaysActions = {
+                        navController.navigate(Routes.TODAYS_ACTIONS)
+                    }
                 )
             }
 

@@ -7,8 +7,10 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zerosepaisa.liferesetos.data.local.dao.GoalDao
 import com.zerosepaisa.liferesetos.data.local.dao.TaskDao
+import com.zerosepaisa.liferesetos.data.local.dao.FocusSessionDao
 import com.zerosepaisa.liferesetos.data.local.entity.Goal
 import com.zerosepaisa.liferesetos.data.local.entity.Task
+import com.zerosepaisa.liferesetos.data.local.entity.FocusSession
 import com.zerosepaisa.liferesetos.data.local.dao.MissionDao
 import com.zerosepaisa.liferesetos.data.local.entity.Mission
 
@@ -16,9 +18,10 @@ import com.zerosepaisa.liferesetos.data.local.entity.Mission
     entities = [
         Goal::class,
         Mission::class,
-        Task::class
+        Task::class,
+        FocusSession::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -27,6 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun goalDao(): GoalDao
     abstract fun missionDao(): MissionDao
     abstract fun taskDao(): TaskDao
+    abstract fun focusSessionDao(): FocusSessionDao
 
     companion object {
         @Volatile

@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.zerosepaisa.liferesetos.data.local.entity.enums.GoalCategory
 import com.zerosepaisa.liferesetos.data.local.entity.enums.GoalPriority
 import com.zerosepaisa.liferesetos.data.local.entity.enums.GoalStatus
+import com.zerosepaisa.liferesetos.data.local.entity.enums.SessionStatus
 
 class Converters {
 
@@ -33,4 +34,13 @@ class Converters {
     @TypeConverter
     fun toGoalStatus(value: String): GoalStatus =
         GoalStatus.valueOf(value)
+
+    // SessionStatus
+
+    @TypeConverter
+    fun fromSessionStatus(status: SessionStatus): String = status.name
+
+    @TypeConverter
+    fun toSessionStatus(value: String): SessionStatus =
+        SessionStatus.valueOf(value)
 }

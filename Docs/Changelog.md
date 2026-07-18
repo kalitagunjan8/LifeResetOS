@@ -90,14 +90,32 @@ Mission, Active Goals, and Today's Actions are all live. Focus Score remains a p
 
 - TaskRowItem now displays a Task's scheduledDate (e.g. "Fri, Jul 17") beneath its title when one is set. Previously the date was saved correctly but never shown anywhere, so there was no visual confirmation it had been set.
 
+---
+
+## v0.5.0 - Focus Sessions
+
+### Architecture
+
+- ADR-012: Focus Sessions start only from Today's Actions (no global Task picker). Duration via presets (15/25 default/45/60 min) or custom input, same logic either way. SessionStatus keeps a BROKEN value for future schema compatibility, but only COMPLETED and ENDED_EARLY are produced this milestone — real interruption detection (foreground service, lifecycle tracking) is deferred. Focus Score = round(actual/planned * 100), clamped 0–100; a COMPLETED session always scores 100.
+
+### Added
+
+- SessionStatus enum (COMPLETED, ENDED_EARLY, BROKEN)
+- FocusSession entity (FK to Task, cascade delete)
+- FocusSessionDao, FocusSessionRepository (includes getTodaysSessions(), for the future Home Dashboard Focus Score)
+- AppDatabase: version bumped 3 → 4 for the new table
+- FocusViewModel: 4-stage state machine (SELECT_TASK → SELECT_DURATION → RUNNING → RESULT), in-memory coroutine countdown timer (does not survive process death — accepted MVP limitation per ADR-012)
+- FocusScreen: full UI for all four stages, including an empty-state that guides the user to Today's Actions if nothing is scheduled today
+- MainScaffold: Focus tab now passes onGoToTodaysActions through to FocusScreen
+
+### Not yet done
+
+- Home Dashboard's Focus Score card is still a placeholder ("No sessions today") — wiring it to real FocusSessionRepository.getTodaysSessions() data is a small follow-up, not yet built
+- Real "Broken" session detection (foreground service + lifecycle interruption tracking) — deferred per ADR-012
+
 ### Fixed
 
 - Home Dashboard "Active Goals" card no longer hardcoded to "0"; now reflects live goal count
-
-### Remaining for v0.4
-
-- Today's Actions card (depends on Tasks, not yet built)
-- Focus Score card (depends on Focus Sessions, not yet built)
 
 ---
 

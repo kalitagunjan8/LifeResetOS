@@ -17,16 +17,30 @@ import androidx.compose.runtime.collectAsState
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onTodaysActionsClick: () -> Unit = {}
+    onTodaysActionsClick: () -> Unit = {},
+    onFocusScoreClick: () -> Unit = {}
 )
 {
     val viewModel: HomeViewModel = viewModel()
     val mission by viewModel.activeMission.collectAsState()
     val goals by viewModel.activeGoals.collectAsState()
     val todaysTasks by viewModel.todaysTasks.collectAsState()
+    val todaysSessions by viewModel.todaysSessions.collectAsState()
 
     val completedCount = todaysTasks.count { it.isCompleted }
     val totalCount = todaysTasks.size
+
+    val sessionCount = todaysSessions.size
+    val averageFocusScore = if (sessionCount == 0) {
+        0
+    } else {
+        todaysSessions.sumOf { it.focusScore } / sessionCount
+    }
+    val focusScoreText = if (sessionCount == 0) {
+        "No sessions today"
+    } else {
+        "$sessionCount Sessions · $averageFocusScore% Avg"
+    }
 
     Column(
         modifier = modifier
@@ -63,7 +77,8 @@ fun HomeScreen(
 
         DashboardCard(
             title = "🔥 Focus Score",
-            value = "No sessions today"
+            value = focusScoreText,
+            onClick = onFocusScoreClick
         )
 
     }

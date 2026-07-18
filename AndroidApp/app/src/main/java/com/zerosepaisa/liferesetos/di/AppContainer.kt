@@ -6,6 +6,7 @@ import com.zerosepaisa.liferesetos.data.local.AppDatabase
 import com.zerosepaisa.liferesetos.data.repository.GoalRepository
 import com.zerosepaisa.liferesetos.data.repository.MissionRepository
 import com.zerosepaisa.liferesetos.data.repository.TaskRepository
+import com.zerosepaisa.liferesetos.data.repository.FocusSessionRepository
 
 class AppContainer(context: Context) {
 
@@ -29,5 +30,9 @@ class AppContainer(context: Context) {
 
     val taskRepository = TaskRepository(
         database.taskDao()
+    )
+
+    val focusSessionRepository = FocusSessionRepository(
+        database.focusSessionDao()
     )
 }
