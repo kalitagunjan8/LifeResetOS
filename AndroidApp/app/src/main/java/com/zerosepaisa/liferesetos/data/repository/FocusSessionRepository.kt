@@ -11,6 +11,13 @@ class FocusSessionRepository(
     suspend fun saveSession(session: FocusSession): Long =
         focusSessionDao.insert(session)
 
+    /**
+     * All Focus Sessions, all time. Used by the Progress Engine for
+     * Total Focus Sessions and all-time Average Focus Score.
+     */
+    fun getAllSessions() =
+        focusSessionDao.getAllSessions()
+
     fun getSessionsForTask(taskId: Long) =
         focusSessionDao.getSessionsForTask(taskId)
 
@@ -23,4 +30,12 @@ class FocusSessionRepository(
             DateUtils.startOfToday(),
             DateUtils.endOfToday()
         )
+
+    /**
+     * Sessions started within an arbitrary range. Used by the Progress
+     * Engine for Focus Minutes This Week without duplicating the
+     * day-scoped query above.
+     */
+    fun getSessionsBetween(startMillis: Long, endMillis: Long) =
+        focusSessionDao.getSessionsBetween(startMillis, endMillis)
 }

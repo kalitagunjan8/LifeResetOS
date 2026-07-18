@@ -270,3 +270,68 @@ Per the Focus Philosophy (Focus Sessions belong to Tasks; they measure execution
 Status
 
 Accepted
+
+---
+
+## ADR-013
+
+Date
+
+2026-07-18
+
+Decision
+
+Introduce ProgressEngine as the project's first Domain Service for v0.6.0 (Analytics & Progress).
+
+ProgressEngine is coordinated by the ViewModel alongside the Repository layer.
+
+Architecture:
+
+Screen
+    ↓
+ViewModel
+ ↙         ↘
+Repository  ProgressEngine
+      ↓
+     DAO
+      ↓
+     Room
+
+ProgressEngine is a plain Kotlin class (no Application/Android coupling), constructed from the four existing repositories (Mission, Goal, Task, FocusSession) — the same shape as a Repository being constructed from a DAO. It depends only on Repositories, never on DAOs directly. It performs pure calculation logic only: percentages, streaks, and aggregates. It has no UI and does not decide how anything is displayed. It exposes reactive Flows (via combine()), consistent with ADR-009 (Room is the primary source of truth) and the reactive pattern used everywhere else in the app.
+
+Concrete metric definitions (not fully specified by the v0.6.0 brief, recorded here rather than left implicit in code):
+
+- Mission Progress % = completed Tasks ÷ total Tasks across every Goal under that Mission. 0% if there are no Tasks, never null/undefined.
+- Goal Progress % = completed Tasks ÷ total Tasks under that Goal. Same 0%-if-empty rule.
+- A "streak day" = any calendar day with at least one completed Task (based on Task.completedAt, device local time).
+- Current Streak counts backward from today with a grace period: if today has zero completions yet, today is skipped rather than breaking the streak (today isn't over), and counting starts from yesterday instead.
+- Longest Streak = the longest run of consecutive streak-days across all history, not just the recent window.
+- Weekly/Monthly boundaries use the device's locale-based first-day-of-week (Calendar.firstDayOfWeek), not a hardcoded Monday or Sunday.
+- Average Focus Score is all-time, across every Focus Session ever logged — the only Focus metric in the v0.6.0 list without an explicit "Today"/"This Week" qualifier, unlike Focus Minutes Today/This Week.
+- Focus Minutes = actualDurationSeconds summed and floor-divided by 60 (whole minutes).
+
+Two new narrow data-access methods were added to support this (data access, not calculation, so they stay in the Repository/DAO layer, not ProgressEngine): TaskDao.getTasksForMission() (a join, needed for Mission Progress %) and FocusSessionDao.getAllSessions() (needed for Total Focus Sessions / all-time Average Focus Score). Existing single-purpose repository methods (getTodaysTasks(), getTodaysSessions()) were left in place, and generic getTasksScheduledBetween()/getSessionsBetween() passthroughs were added instead of writing near-duplicate Weekly/Monthly-specific queries, per "prefer composition over duplication."
+
+Clarification (2026-07-18): ProgressEngine is a domain service, not a replacement for the Repository layer. The ViewModel is the coordinator — it owns both the Repository dependencies it needs directly (for reads/writes) and the ProgressEngine (for derived metrics), and hands ProgressEngine the same Repository instances it already holds. ProgressEngine is a sibling branch off the ViewModel, not a link in the Repository → DAO → Room chain:
+
+Screen
+    ↓
+ViewModel
+ ↙         ↘
+Repository  ProgressEngine
+      ↓
+     DAO
+      ↓
+     Room
+
+ProgressEngine's constructor accepting Repository instances (never building or reaching past them) is what makes this the only shape a caller can use it in — a ViewModel cannot obtain a ProgressEngine without already holding the Repositories it was built from.
+
+Future domain services (for example NotificationEngine, AchievementEngine, RecommendationEngine, BackupEngine) should follow this same pattern: a plain Kotlin class, no Application/Android coupling, constructed from Repository instances only, never from DAOs directly, holding pure derived-logic with no UI concerns, and coordinated by the ViewModel alongside whatever Repositories that ViewModel already needs — not layered in place of the Repository layer, and not layered on top of it as a second data-access path.
+
+Reason
+
+Analytics, dashboards, notifications, achievements, and future reporting all need the same derived numbers. Without a dedicated layer, this calculation logic would either get duplicated across ViewModels or leak into composables, both of which this project's architecture explicitly avoids ("business logic must not live inside composables"). A single reactive ProgressEngine gives every future consumer the same answer, computed once, recomputed automatically whenever the underlying Room data changes.
+
+Status
+
+Accepted

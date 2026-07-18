@@ -1,63 +1,44 @@
 # Roadmap
 
-## ✅ Version 0.1 — Foundation
-- Project setup
-- Material 3 theme
-- Navigation
-- Welcome screen
+## ✅ v0.1
+Android Project Setup
 
-## ✅ Version 0.2 — Application Shell
-- Splash screen
-- Onboarding flow
-- Bottom navigation
-- Main scaffold
-- Home, Journey, Focus, Profile screens
+## ✅ v0.2
+Navigation Foundation
 
-## ✅ Version 0.3 — Mission & Goal System
-- Mission creation
-- Mission persistence
-- Goal CRUD
-- Goal Detail screen
+## ✅ v0.3
+Mission & Goal Foundation
 
-## ✅ Version 0.4 — Task System
-- Task CRUD
-- Goal → Task relationship
-- Goal Detail workflow
+## ✅ v0.4
+Goals Management
 
-## 🔄 Version 0.4.2 — Home Dashboard Integration (Current)
-- Live Current Mission
-- Live Active Goals count
-- Today's Actions
-- Replace placeholder dashboard data
+## ✅ v0.4.2
+Today's Actions
 
-## Version 0.5 — Focus Sessions
-- Start Focus Session
-- End Focus Session
-- Session history
-- Focus Score
-- Dashboard integration
+## ✅ v0.5.0
+Focus Sessions
 
-## Version 0.6 — Analytics & Progress
-- Mission progress
-- Goal progress
-- Task completion statistics
-- Productivity insights
+---
 
-## Version 0.7 — Notifications & Reminders
-- Task reminders
-- Daily review
-- Mission reminders
+## 🔄 v0.6.0
+Analytics & Progress
 
-## Version 0.8 — Backup & Restore
-- Local backup
-- Import/Export
-- Cloud sync preparation
+- Progress Engine
+- Analytics Dashboard
+- Statistics
+- Streaks
+- Weekly Progress
 
-## Version 0.9 — Closed Beta
-- Testing
-- Bug fixes
-- Performance optimization
-- UI polish
+---
 
-## Version 1.0 — Public Release
-- Play Store release
+## v0.7
+Notifications
+
+## v0.8
+Backup & Restore
+
+## v0.9
+Beta Testing
+
+## v1.0
+Play Store Release

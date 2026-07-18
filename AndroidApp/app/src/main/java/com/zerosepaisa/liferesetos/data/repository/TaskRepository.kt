@@ -24,6 +24,13 @@ class TaskRepository(
         taskDao.getTasksForGoal(goalId)
 
     /**
+     * All Tasks across every Goal belonging to the given Mission.
+     * Used by the Progress Engine for Mission Progress %.
+     */
+    fun getTasksForMission(missionId: Long) =
+        taskDao.getTasksForMission(missionId)
+
+    /**
      * Tasks whose scheduledDate falls within the current calendar day
      * (per ADR-011). Tasks with no scheduledDate are excluded.
      */
@@ -32,6 +39,14 @@ class TaskRepository(
             DateUtils.startOfToday(),
             DateUtils.endOfToday()
         )
+
+    /**
+     * Tasks scheduled within an arbitrary range. Used by the Progress Engine
+     * for Weekly/Monthly Completion % without duplicating the day-scoped
+     * query above.
+     */
+    fun getTasksScheduledBetween(startMillis: Long, endMillis: Long) =
+        taskDao.getTasksScheduledBetween(startMillis, endMillis)
 
     suspend fun getTaskById(taskId: Long) =
         taskDao.getTaskById(taskId)

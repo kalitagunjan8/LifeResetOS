@@ -11,6 +11,28 @@
 
 All notable changes to Life Reset OS will be documented here.
 
+## v0.5.0 — Complete Focus Sessions
+
+### Added
+
+- Focus Session entity
+- FocusSessionDao
+- FocusSessionRepository
+- Focus timer
+- Preset durations
+- Custom durations
+- Session persistence
+- Focus Score calculation
+
+### Changed
+
+- Home Dashboard Focus Score now displays live Room data
+- Dashboard is now fully backed by application data
+
+### Completed
+
+- Focus Sessions milestone
+
 ---
 
 ## v0.4 (in progress) - Dynamic Home Dashboard

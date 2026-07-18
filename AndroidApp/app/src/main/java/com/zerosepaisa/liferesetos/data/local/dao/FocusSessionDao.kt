@@ -12,6 +12,9 @@ interface FocusSessionDao {
     @Insert
     suspend fun insert(session: FocusSession): Long
 
+    @Query("SELECT * FROM focus_sessions ORDER BY startedAt DESC")
+    fun getAllSessions(): Flow<List<FocusSession>>
+
     @Query("SELECT * FROM focus_sessions WHERE taskId = :taskId ORDER BY startedAt DESC")
     fun getSessionsForTask(taskId: Long): Flow<List<FocusSession>>
 

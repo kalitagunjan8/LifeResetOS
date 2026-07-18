@@ -26,6 +26,20 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE goalId = :goalId ORDER BY createdAt DESC")
     fun getTasksForGoal(goalId: Long): Flow<List<Task>>
 
+    /**
+     * All Tasks under any Goal belonging to the given Mission (via join).
+     * Used by the Progress Engine for Mission Progress %.
+     */
+    @Query(
+        """
+        SELECT tasks.* FROM tasks
+        INNER JOIN goals ON tasks.goalId = goals.id
+        WHERE goals.missionId = :missionId
+        ORDER BY tasks.createdAt DESC
+        """
+    )
+    fun getTasksForMission(missionId: Long): Flow<List<Task>>
+
     @Query(
         "SELECT * FROM tasks WHERE scheduledDate >= :startMillis AND scheduledDate <= :endMillis ORDER BY createdAt DESC"
     )

@@ -12,6 +12,8 @@ import com.zerosepaisa.liferesetos.data.repository.FocusSessionRepository
 import com.zerosepaisa.liferesetos.data.repository.GoalRepository
 import com.zerosepaisa.liferesetos.data.repository.MissionRepository
 import com.zerosepaisa.liferesetos.data.repository.TaskRepository
+import com.zerosepaisa.liferesetos.progress.GlobalProgressSnapshot
+import com.zerosepaisa.liferesetos.progress.ProgressEngine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,6 +39,18 @@ class HomeViewModel(
         AppDatabase.getInstance(application).focusSessionDao()
     )
 
+    /**
+     * Built from the same Repository instances above, per ADR-013 — the
+     * ViewModel is the coordinator, owning both the Repositories and the
+     * domain service, rather than ProgressEngine replacing this layer.
+     */
+    private val progressEngine = ProgressEngine(
+        missionRepository = missionRepository,
+        goalRepository = goalRepository,
+        taskRepository = taskRepository,
+        focusSessionRepository = focusSessionRepository
+    )
+
     private val _activeMission = MutableStateFlow<Mission?>(null)
     val activeMission: StateFlow<Mission?> = _activeMission.asStateFlow()
 
@@ -48,6 +62,9 @@ class HomeViewModel(
 
     private val _todaysSessions = MutableStateFlow<List<FocusSession>>(emptyList())
     val todaysSessions: StateFlow<List<FocusSession>> = _todaysSessions.asStateFlow()
+
+    private val _globalProgress = MutableStateFlow<GlobalProgressSnapshot?>(null)
+    val globalProgress: StateFlow<GlobalProgressSnapshot?> = _globalProgress.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -71,6 +88,12 @@ class HomeViewModel(
         viewModelScope.launch {
             focusSessionRepository.getTodaysSessions().collect {
                 _todaysSessions.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            progressEngine.observeGlobalProgress().collect {
+                _globalProgress.value = it
             }
         }
     }

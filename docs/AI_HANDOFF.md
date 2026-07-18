@@ -265,7 +265,17 @@ Active Goals — live count (Room)
 
 Today's Actions — live "X / Y Completed"; tappable, opens Today's Actions screen
 
-Focus Score — still a placeholder ("No sessions today"); not yet wired to real FocusSessionRepository data
+Focus Score — live (Room)
+
+Displays today's focus statistics from FocusSessionRepository.
+
+If no sessions exist today:
+
+"No sessions today"
+
+Otherwise displays:
+
+"<X> Sessions · <Average Focus Score>% Avg"
 
 Future
 
@@ -506,7 +516,9 @@ Connect Home Dashboard to live Room data.
 ✓ Mission — done
 ✓ Active Goals — done (v0.4)
 ✓ Today's Actions — done (v0.4.2). scheduledDate added to Task (ADR-011); shows "X / Y Completed", tappable, opens dedicated Today's Actions screen
-☐ Focus Score — Focus Sessions built (v0.5.0), but Home Dashboard not yet wired to show a computed Focus Score
+✓ Focus Score — complete (v0.5.0)
+
+Displays today's session count and average Focus Score from Room.
 
 2.
 
@@ -536,8 +548,32 @@ Focus Sessions. ✓ complete (v0.5.0), via ADR-012
 ✓ Duration selection — done, presets (15/25 default/45/60 min) + custom minutes input
 ✓ Running timer — done, in-viewmodel coroutine countdown (does not survive process death — accepted MVP limitation)
 ✓ Result screen — done, shows status (Completed/Ended Early), duration, Focus Score
-☐ Home Dashboard's Focus Score card — still a placeholder ("No sessions today"); wiring it to FocusSessionRepository.getTodaysSessions() is the one remaining item to fully close out item 1 above
+✓ Home Dashboard Focus Score
+
+Fully connected to FocusSessionRepository.
 ☐ Real "Broken" session detection (foreground service + lifecycle interruption tracking) — intentionally deferred per ADR-012; SessionStatus.BROKEN exists in the schema but nothing produces it yet
+
+# Next Milestone
+
+v0.6.0 — Analytics & Progress
+
+Priority order:
+
+1. Progress Engine
+2. Analytics Dashboard
+3. Progress Visualizations
+
+The Progress Engine should calculate:
+
+- Mission completion
+- Goal completion
+- Today's completion
+- Weekly completion
+- Focus minutes today
+- Focus minutes this week
+- Current streak
+
+Only after the calculations exist should UI dashboards and charts be built.
 
 ---
 

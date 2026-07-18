@@ -7,6 +7,7 @@ import com.zerosepaisa.liferesetos.data.repository.GoalRepository
 import com.zerosepaisa.liferesetos.data.repository.MissionRepository
 import com.zerosepaisa.liferesetos.data.repository.TaskRepository
 import com.zerosepaisa.liferesetos.data.repository.FocusSessionRepository
+import com.zerosepaisa.liferesetos.progress.ProgressEngine
 
 class AppContainer(context: Context) {
 
@@ -34,5 +35,15 @@ class AppContainer(context: Context) {
 
     val focusSessionRepository = FocusSessionRepository(
         database.focusSessionDao()
+    )
+
+    /**
+     * Composed from repositories, never from DAOs directly (per ADR-013).
+     */
+    val progressEngine = ProgressEngine(
+        missionRepository = missionRepository,
+        goalRepository = goalRepository,
+        taskRepository = taskRepository,
+        focusSessionRepository = focusSessionRepository
     )
 }
