@@ -11,6 +11,15 @@
 
 All notable changes to Life Reset OS will be documented here.
 
+## v0.6.0
+
+- Introduced ProgressEngine domain service
+- Added reusable analytics calculation layer
+- Added mission, goal, streak, focus and completion metrics
+- Extended repositories for aggregate progress queries
+- Implemented first ProgressEngine consumer
+- Finalized ADR-013 architecture
+
 ## v0.5.0 — Complete Focus Sessions
 
 ### Added

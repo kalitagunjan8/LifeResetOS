@@ -18,16 +18,16 @@ Today's Actions
 ## ✅ v0.5.0
 Focus Sessions
 
----
-
-## 🔄 v0.6.0
+## ✅ v0.6.0
 Analytics & Progress
 
-- Progress Engine
+- ProgressEngine
 - Analytics Dashboard
-- Statistics
-- Streaks
-- Weekly Progress
+- Mission Progress
+- Goal Progress
+- Completion Metrics
+- Focus Metrics
+- Streak Tracking
 
 ---
 
@@ -38,7 +38,8 @@ Notifications
 Backup & Restore
 
 ## v0.9
-Beta Testing
+UI / UX Polish
+Beta Preparation
 
 ## v1.0
 Play Store Release

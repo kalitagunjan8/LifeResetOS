@@ -13,6 +13,8 @@ object Routes {
 
     const val TODAYS_ACTIONS = "todaysActions"
 
+    const val PROGRESS = "progress"
+
     /**
      * Builds a navigable route string.
      * Pass no goalId (or null) for Create mode.

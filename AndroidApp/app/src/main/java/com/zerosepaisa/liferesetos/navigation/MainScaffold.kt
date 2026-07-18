@@ -43,7 +43,7 @@ fun MainScaffold(
                         navController.navigate(Routes.TODAYS_ACTIONS)
                     },
                     onFocusScoreClick = {
-                        currentRoute = BottomNavItem.Focus.route
+                        navController.navigate(Routes.PROGRESS)
                     }
                 )
             }

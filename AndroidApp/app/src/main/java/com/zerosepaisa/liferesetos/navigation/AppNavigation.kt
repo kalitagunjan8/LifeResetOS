@@ -14,6 +14,7 @@ import com.zerosepaisa.liferesetos.feature.home.HomeScreen
 import com.zerosepaisa.liferesetos.feature.goals.GoalsScreen
 import com.zerosepaisa.liferesetos.feature.goaldetail.GoalDetailScreen
 import com.zerosepaisa.liferesetos.feature.todaysactions.TodaysActionsScreen
+import com.zerosepaisa.liferesetos.feature.progress.ProgressScreen
 import com.zerosepaisa.liferesetos.feature.onboarding.WelcomeScreen
 import com.zerosepaisa.liferesetos.navigation.Routes
 import com.zerosepaisa.liferesetos.viewmodel.MainViewModel
@@ -122,6 +123,12 @@ fun AppNavigation() {
         composable(Routes.TODAYS_ACTIONS) {
 
             TodaysActionsScreen()
+
+        }
+
+        composable(Routes.PROGRESS) {
+
+            ProgressScreen()
 
         }
 

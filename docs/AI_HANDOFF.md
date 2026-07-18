@@ -2,7 +2,7 @@
 
 **Project:** Life Reset OS
 **Last Updated:** 2026-07-18
-**Current Version:** v0.5.0
+**Current Version:** v0.6.0
 
 ---
 
@@ -152,6 +152,18 @@ Manual Dependency Injection
 
 No Hilt/Koin during MVP.
 
+ProgressEngine (Domain Service)
+
+ProgressEngine is the first Domain Service in the project.
+
+It is coordinated by the ViewModel alongside the Repository layer.
+
+Repositories remain the only data-access layer.
+
+ProgressEngine performs derived business calculations only and depends exclusively on Repository instances.
+
+Future domain services should follow the same pattern.
+
 ---
 
 # Technology Stack
@@ -265,7 +277,7 @@ Active Goals — live count (Room)
 
 Today's Actions — live "X / Y Completed"; tappable, opens Today's Actions screen
 
-Focus Score — live (Room)
+Focus Score — live (Displays today's focus session count and average Focus Score using ProgressEngine-derived metrics.)
 
 Displays today's focus statistics from FocusSessionRepository.
 
@@ -280,6 +292,7 @@ Otherwise displays:
 Future
 
 Current Mission and Active Goals cards could also deep-link into Journey (not yet done — only Today's Actions is currently tappable).
+
 
 ---
 
@@ -475,11 +488,14 @@ Focus Sessions (landed here instead of the originally planned v0.7 slot — see 
 
 Note: actual delivery didn't match the original version numbering below 1:1 — Goals Management, Tasks, and Focus Sessions all shipped earlier than their originally planned v0.5/v0.6/v0.7 slots. Leaving the original plan below for historical reference; the "Completed" list above reflects what's actually true today.
 
+v0.6.0
+
+ProgressEngine Foundation (Analytics Domain Service)
+
+
 Current
 
-Home Dashboard's Focus Score card — the one remaining item to fully close out v0.4's original Home Dashboard goal (see Current Development Priority, item 1 and item 5)
-
-Upcoming (original plan, not yet reconciled to actual version numbers)
+Analytics / Progress Screen
 
 v0.5
 
@@ -511,69 +527,60 @@ MVP Release
 
 1.
 
-Connect Home Dashboard to live Room data.
+Analytics & Progress Dashboard (v0.6.1)
 
-✓ Mission — done
-✓ Active Goals — done (v0.4)
-✓ Today's Actions — done (v0.4.2). scheduledDate added to Task (ADR-011); shows "X / Y Completed", tappable, opens dedicated Today's Actions screen
-✓ Focus Score — complete (v0.5.0)
-
-Displays today's session count and average Focus Score from Room.
+☐ Build Analytics screen
+☐ Display ProgressEngine metrics
+☐ Create reusable analytics cards
+☐ Polish Material 3 dashboard UI
 
 2.
 
-Build Journey screen.
+Future Focus improvements
 
-✓ done (v0.4) — read-only Mission + Goals list
+☐ Real "Broken" session detection
+☐ Foreground Service timer
+☐ Survive process death
 
 3.
 
-Goals CRUD. ✓ complete (v0.4) — Create, Edit, Delete all done
+Future Features
 
-✓ Create (Add Goal) — done (v0.4), via dedicated Goals screen reached from Journey's FAB
-✓ Edit — done (v0.4), reached via Goal Detail's Edit button (was direct tap-to-edit; superseded by ADR-010); reuses GoalsScreen in Edit mode
-✓ Delete — done (v0.4), Delete button on Edit Goal screen with confirmation dialog
-
-4.
-
-Tasks. ✓ Create + View + Complete toggle done (v0.4), via new Goal Detail screen (ADR-010)
-✓ Edit Task — done (v0.5), tap a task row to open an Edit Task dialog
-✓ Delete Task — done (v0.5), Delete button inside Edit Task dialog, with confirmation
-
-5.
-
-Focus Sessions. ✓ complete (v0.5.0), via ADR-012
-
-✓ Task selection — done, from Today's Actions scheduled tasks only (no global picker)
-✓ Duration selection — done, presets (15/25 default/45/60 min) + custom minutes input
-✓ Running timer — done, in-viewmodel coroutine countdown (does not survive process death — accepted MVP limitation)
-✓ Result screen — done, shows status (Completed/Ended Early), duration, Focus Score
-✓ Home Dashboard Focus Score
-
-Fully connected to FocusSessionRepository.
-☐ Real "Broken" session detection (foreground service + lifecycle interruption tracking) — intentionally deferred per ADR-012; SessionStatus.BROKEN exists in the schema but nothing produces it yet
+☐ Habits
+☐ Statistics
+☐ Notifications
+☐ Achievements
 
 # Next Milestone
 
-v0.6.0 — Analytics & Progress
+v0.6.1 — Analytics Dashboard
 
 Priority order:
 
-1. Progress Engine
-2. Analytics Dashboard
-3. Progress Visualizations
+1. Analytics Screen
+2. Progress Dashboard
+3. Statistics Foundation
 
-The Progress Engine should calculate:
+The Analytics Dashboard should consume ProgressEngine and display:
 
-- Mission completion
-- Goal completion
-- Today's completion
-- Weekly completion
-- Focus minutes today
-- Focus minutes this week
-- Current streak
+- Mission Progress
+- Goal Progress
+- Today's Completion
+- Weekly Completion
+- Monthly Completion
+- Current Streak
+- Longest Streak
+- Focus Minutes Today
+- Focus Minutes This Week
+- Average Focus Score
+- Total Completed Tasks
+- Total Focus Sessions
 
-Only after the calculations exist should UI dashboards and charts be built.
+This milestone should focus on presenting ProgressEngine data in a clean Material 3 interface.
+
+No charts or graphs during this milestone.
+
+Visualizations may be introduced in a later release after the dashboard is complete.
 
 ---
 
