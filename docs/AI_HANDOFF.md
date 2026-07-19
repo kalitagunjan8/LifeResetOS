@@ -2,7 +2,7 @@
 
 **Project:** Life Reset OS
 **Last Updated:** 2026-07-18
-**Current Version:** v0.6.0
+**Current Version: v0.7.0
 
 ---
 
@@ -154,13 +154,15 @@ No Hilt/Koin during MVP.
 
 ProgressEngine (Domain Service)
 
+NotificationEngine (Domain Service)
+
 ProgressEngine is the first Domain Service in the project.
 
-It is coordinated by the ViewModel alongside the Repository layer.
+Domain Services are coordinated by the ViewModel alongside the Repository layer.
 
 Repositories remain the only data-access layer.
 
-ProgressEngine performs derived business calculations only and depends exclusively on Repository instances.
+Domain Services perform derived business calculations or orchestration only and depend exclusively on Repository instances.
 
 Future domain services should follow the same pattern.
 
@@ -231,13 +233,19 @@ Bottom Navigation
 
 ✓ Profile
 
-Navigation now behaves correctly.
+✓ Navigation now behaves correctly.
 
-Back button exits the application from Home.
+✓ Back button exits the application from Home.
 
-Onboarding is remembered using DataStore.
+✓ Onboarding is remembered using DataStore.
 
-App reopens directly into Home.
+✓ App reopens directly into Home.
+
+Notifications currently deep-link into top-level navigation destinations.
+
+Internal MainScaffold tabs are not yet individually addressable through NavController.
+
+This navigation refinement is planned for v0.7.1.
 
 ---
 
@@ -263,7 +271,11 @@ Implemented
 
 ✓ Focus (live — Task selection from today's scheduled tasks, duration presets + custom, running timer, result screen; per ADR-012)
 
+✓ Progress (Analytics Dashboard — live, reachable from the Home Dashboard's Focus Score card.)
+
 ✓ Profile (placeholder)
+
+✓ Notification infrastructure (WorkManager + NotificationEngine)
 
 ---
 
@@ -277,7 +289,7 @@ Active Goals — live count (Room)
 
 Today's Actions — live "X / Y Completed"; tappable, opens Today's Actions screen
 
-Focus Score — live (Displays today's focus session count and average Focus Score using ProgressEngine-derived metrics.)
+Focus Score — live. Displays today's session count and average Focus Score. Accessible from the Home Dashboard and links to the Analytics / Progress screen.
 
 Displays today's focus statistics from FocusSessionRepository.
 
@@ -379,6 +391,8 @@ TaskRepository (added v0.5)
 FocusSessionRepository (added v0.5.0)
 
 Future repositories will also be registered here.
+
+NotificationEngine (added v0.7.0)
 
 ---
 
@@ -490,99 +504,114 @@ Note: actual delivery didn't match the original version numbering below 1:1 — 
 
 v0.6.0
 
-ProgressEngine Foundation (Analytics Domain Service)
+Analytics & Progress
 
+✓ ProgressEngine
+
+✓ Analytics Dashboard
+
+✓ Progress Screen
+
+✓ Progress Metrics
+
+v0.7.0  Smart Notifications ✅
+
+Smart Notifications
+
+✓ NotificationEngine
+
+✓ Daily Mission Reminder
+
+✓ Today's Actions Reminder
+
+✓ Focus Session Reminder
+
+✓ Weekly Review Reminder
 
 Current
 
-Analytics / Progress Screen
+v0.7.1  Navigation Deep Links
 
-v0.5
+v0.8    Backup & Restore
 
-Goals Management
+v0.9    Beta Testing
 
-v0.6
+v0.9.x  UI/UX Polish Pass
 
-Tasks
-
-v0.7
-
-Focus Sessions
-
-v0.8
-
-Habits
-
-v0.9
-
-Statistics
-
-v1.0
-
-MVP Release
-
----
+v1.0    Play Store Release
 
 # Current Development Priority
 
+
 1.
 
-Analytics & Progress Dashboard (v0.6.1)
+Navigation Deep Links (v0.7.1)
 
-☐ Build Analytics screen
-☐ Display ProgressEngine metrics
-☐ Create reusable analytics cards
-☐ Polish Material 3 dashboard UI
+Goal:
+
+Allow every MainScaffold destination to be opened directly through NavController.
+
+Priority
+
+✓ Home
+
+✓ Journey
+
+✓ Focus
+
+✓ Progress
+
+✓ Profile
+
+Update notification PendingIntents to navigate directly to their intended destination rather than opening Home first.
+
+No UI redesign.
+
+No behaviour changes.
+
+Architecture refinement only.
 
 2.
 
-Future Focus improvements
+Future Focus Improvements
 
-☐ Real "Broken" session detection
+☐ Real Broken Session detection
+
 ☐ Foreground Service timer
+
 ☐ Survive process death
+
+☐ Adaptive Focus Coaching (ADR-014)
 
 3.
 
 Future Features
 
 ☐ Habits
+
 ☐ Statistics
-☐ Notifications
+
+☐ Backup & Restore
+
 ☐ Achievements
 
 # Next Milestone
 
-v0.6.1 — Analytics Dashboard
+# Next Milestone
 
-Priority order:
+v0.7.1 — Navigation Deep Links
 
-1. Analytics Screen
-2. Progress Dashboard
-3. Statistics Foundation
+Objectives
 
-The Analytics Dashboard should consume ProgressEngine and display:
+• Make every MainScaffold destination addressable through NavController.
 
-- Mission Progress
-- Goal Progress
-- Today's Completion
-- Weekly Completion
-- Monthly Completion
-- Current Streak
-- Longest Streak
-- Focus Minutes Today
-- Focus Minutes This Week
-- Average Focus Score
-- Total Completed Tasks
-- Total Focus Sessions
+• Allow notifications to deep-link directly into the intended destination.
 
-This milestone should focus on presenting ProgressEngine data in a clean Material 3 interface.
+• Remove the current Home-only deep-link limitation.
 
-No charts or graphs during this milestone.
+• Preserve the existing user experience.
 
-Visualizations may be introduced in a later release after the dashboard is complete.
-
----
+This milestone is an architectural refinement only.
 
 # Non-negotiable Principle
 

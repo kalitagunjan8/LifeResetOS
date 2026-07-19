@@ -6,6 +6,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.TrackChanges
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.zerosepaisa.liferesetos.navigation.Routes
 
 sealed class BottomNavItem(
     val route: String,
@@ -14,25 +15,25 @@ sealed class BottomNavItem(
 ) {
 
     object Home : BottomNavItem(
-        route = "home",
+        route = Routes.HOME,
         title = "Home",
         icon = Icons.Outlined.Home
     )
 
     object Journey : BottomNavItem(
-        route = "com/zerosepaisa/liferesetos/feature/journey",
+        route = Routes.JOURNEY,
         title = "Journey",
         icon = Icons.Outlined.TrackChanges
     )
 
     object Focus : BottomNavItem(
-        route = "focus",
+        route = Routes.FOCUS,
         title = "Focus",
         icon = Icons.Outlined.Timer
     )
 
     object Profile : BottomNavItem(
-        route = "profile",
+        route = Routes.PROFILE,
         title = "Profile",
         icon = Icons.Outlined.Person
     )

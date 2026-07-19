@@ -1,82 +1,25 @@
 package com.zerosepaisa.liferesetos.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import com.zerosepaisa.liferesetos.feature.focus.FocusScreen
-import com.zerosepaisa.liferesetos.feature.home.HomeScreen
-import com.zerosepaisa.liferesetos.feature.journey.JourneyScreen
-import com.zerosepaisa.liferesetos.feature.profile.ProfileScreen
-import com.zerosepaisa.liferesetos.navigation.bottomnav.BottomNavItem
 import com.zerosepaisa.liferesetos.navigation.bottomnav.BottomNavigationBar
 
 @Composable
 fun MainScaffold(
-    navController: NavHostController
+    navController: NavHostController,
+    content: @Composable (Modifier) -> Unit
 ) {
 
-    var currentRoute by remember {
-        mutableStateOf(BottomNavItem.Home.route)
-    }
-
     Scaffold(
-
         bottomBar = {
-            BottomNavigationBar(
-                selectedRoute = currentRoute,
-                onItemClick = {
-                    currentRoute = it
-                }
-            )
+            BottomNavigationBar(navController = navController)
         }
-
     ) { innerPadding ->
-
-        when (currentRoute) {
-
-            BottomNavItem.Home.route -> {
-                HomeScreen(
-                    modifier = Modifier.padding(innerPadding),
-                    onTodaysActionsClick = {
-                        navController.navigate(Routes.TODAYS_ACTIONS)
-                    },
-                    onFocusScoreClick = {
-                        navController.navigate(Routes.PROGRESS)
-                    }
-                )
-            }
-
-            BottomNavItem.Journey.route -> {
-                JourneyScreen(
-                    modifier = Modifier.padding(innerPadding),
-                    onAddGoalClick = {
-                        navController.navigate(Routes.goalsRoute())
-                    },
-                    onGoalClick = { goalId ->
-                        navController.navigate(Routes.goalDetailRoute(goalId))
-                    }
-                )
-            }
-
-            BottomNavItem.Focus.route -> {
-                FocusScreen(
-                    modifier = Modifier.padding(innerPadding),
-                    onGoToTodaysActions = {
-                        navController.navigate(Routes.TODAYS_ACTIONS)
-                    }
-                )
-            }
-
-            BottomNavItem.Profile.route -> {
-                ProfileScreen(
-                    modifier = Modifier.padding(innerPadding)
-                )
-            }
-
-        }
-
+        content(Modifier.padding(innerPadding))
     }
 
 }

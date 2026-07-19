@@ -13,12 +13,32 @@ All notable changes to Life Reset OS will be documented here.
 
 ## v0.6.0
 
+### Added
+
 - Introduced ProgressEngine domain service
 - Added reusable analytics calculation layer
-- Added mission, goal, streak, focus and completion metrics
-- Extended repositories for aggregate progress queries
-- Implemented first ProgressEngine consumer
-- Finalized ADR-013 architecture
+- Added dedicated Analytics / Progress screen
+- Added mission progress metrics
+- Added goal progress metrics
+- Added today's, weekly and monthly completion metrics
+- Added current and longest streak metrics
+- Added focus minutes (today and this week)
+- Added average Focus Score metric
+- Added per-goal progress breakdown
+- Added total completed tasks metric
+- Added total focus sessions metric
+
+### Changed
+
+- Home Dashboard Focus Score card now opens the Analytics / Progress screen
+- Implemented the first production consumer of ProgressEngine
+- Extended repositories to support aggregate progress calculations
+
+### Architecture
+
+- Finalized ADR-013
+- Established ProgressEngine as the first Domain Service
+- Standardized the Domain Service pattern for future engines
 
 ## v0.5.0 — Complete Focus Sessions
 

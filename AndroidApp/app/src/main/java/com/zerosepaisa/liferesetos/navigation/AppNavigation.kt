@@ -5,25 +5,30 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.zerosepaisa.liferesetos.feature.focus.FocusScreen
 import com.zerosepaisa.liferesetos.feature.home.HomeScreen
 import com.zerosepaisa.liferesetos.feature.goals.GoalsScreen
 import com.zerosepaisa.liferesetos.feature.goaldetail.GoalDetailScreen
+import com.zerosepaisa.liferesetos.feature.journey.JourneyScreen
+import com.zerosepaisa.liferesetos.feature.profile.ProfileScreen
 import com.zerosepaisa.liferesetos.feature.todaysactions.TodaysActionsScreen
 import com.zerosepaisa.liferesetos.feature.progress.ProgressScreen
 import com.zerosepaisa.liferesetos.feature.onboarding.WelcomeScreen
-import com.zerosepaisa.liferesetos.navigation.Routes
+import com.zerosepaisa.liferesetos.navigation.bottomnav.BottomNavItem
 import com.zerosepaisa.liferesetos.viewmodel.MainViewModel
 import com.zerosepaisa.liferesetos.feature.mission.MissionScreen
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(
+    navController: NavHostController = rememberNavController()
+) {
 
-    val navController = rememberNavController()
     val viewModel: MainViewModel = viewModel()
     val isFirstLaunch by viewModel.isFirstLaunch.collectAsState()
 
@@ -54,8 +59,8 @@ fun AppNavigation() {
                 }
             )
 
-
         }
+
         composable(Routes.MISSION) {
             MissionScreen(
                 onContinue = {
@@ -71,12 +76,51 @@ fun AppNavigation() {
             )
         }
 
-        composable(Routes.HOME) {
+        composable(BottomNavItem.Home.route) {
+            MainScaffold(navController = navController) { modifier ->
+                HomeScreen(
+                    modifier = modifier,
+                    onTodaysActionsClick = {
+                        navController.navigate(Routes.TODAYS_ACTIONS)
+                    },
+                    onFocusScoreClick = {
+                        navController.navigate(Routes.PROGRESS)
+                    }
+                )
+            }
+        }
 
-            MainScaffold(
-                navController = navController
-            )
+        composable(BottomNavItem.Journey.route) {
+            MainScaffold(navController = navController) { modifier ->
+                JourneyScreen(
+                    modifier = modifier,
+                    onAddGoalClick = {
+                        navController.navigate(Routes.goalsRoute())
+                    },
+                    onGoalClick = { goalId ->
+                        navController.navigate(Routes.goalDetailRoute(goalId))
+                    }
+                )
+            }
+        }
 
+        composable(BottomNavItem.Focus.route) {
+            MainScaffold(navController = navController) { modifier ->
+                FocusScreen(
+                    modifier = modifier,
+                    onGoToTodaysActions = {
+                        navController.navigate(Routes.TODAYS_ACTIONS)
+                    }
+                )
+            }
+        }
+
+        composable(BottomNavItem.Profile.route) {
+            MainScaffold(navController = navController) { modifier ->
+                ProfileScreen(
+                    modifier = modifier
+                )
+            }
         }
 
         composable(

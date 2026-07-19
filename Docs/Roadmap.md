@@ -31,8 +31,14 @@ Analytics & Progress
 
 ---
 
-## v0.7
-Notifications
+## ✅ v0.7.0
+Smart Notifications
+
+- Notification Engine
+- Daily Reminders
+- Task Reminders
+- Focus Reminders
+- Weekly Review
 
 ## v0.8
 Backup & Restore

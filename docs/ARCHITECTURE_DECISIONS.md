@@ -335,3 +335,128 @@ Analytics, dashboards, notifications, achievements, and future reporting all nee
 Status
 
 Accepted
+
+
+---
+
+## ADR-014
+
+Date
+
+2026-07-19
+
+Decision
+
+Focus Sessions should provide adaptive coaching when a user attempts to end a session before completion.
+
+The application must never prevent a user from ending a Focus Session, but it should encourage intentional completion before doing so.
+
+Coaching messages are determined by the percentage of the planned session that has been completed, not by elapsed time in minutes. This ensures identical behaviour regardless of whether the planned session lasts 15, 25, 45, or 60 minutes.
+
+The initial coaching experience is divided into three progress ranges:
+
+Beginning (0–20%)
+
+The session has only just begun.
+
+The dialog encourages the user to continue before momentum is lost.
+
+Example message:
+
+"You've just begun this session.
+It's only been 23 seconds.
+
+Every session you finish is a vote for the person you're becoming.
+This one is still yours."
+
+Primary action
+
+Continue Focusing
+
+Secondary action
+
+End Session Anyway
+
+---
+
+Momentum (20–75%)
+
+The user has already invested meaningful effort.
+
+The dialog reinforces the progress already made.
+
+Example message:
+
+"You're in the zone.
+
+You've already completed 42% of this session.
+
+This is usually where real focus begins.
+
+Stay with it."
+
+Primary action
+
+Keep Going
+
+Secondary action
+
+End Session Anyway
+
+---
+
+Finish Line (75–99%)
+
+The user is close to completing the session.
+
+The dialog encourages finishing the remaining time.
+
+Example message:
+
+"You're almost there.
+
+Only 6 minutes left.
+
+You've already done the hard part.
+
+Finish strong."
+
+Primary action
+
+Finish Strong
+
+Secondary action
+
+End Session Anyway
+
+---
+
+Completed sessions never display this dialog.
+
+The coaching system should only encourage.
+
+It must never manipulate statistics, discard sessions, or prevent users from ending a session.
+
+Future versions may personalize coaching using additional context such as:
+
+- Mission
+- Current streak
+- Historical consistency
+- Time of day
+- Focus history
+
+without changing the overall architecture.
+
+Reason
+
+Life Reset OS exists to help users follow through on intentional work rather than simply tracking it.
+
+A generic confirmation dialog only prevents accidental taps.
+
+Adaptive coaching reinforces the application's philosophy while fully respecting user autonomy.
+
+Using completion percentage rather than elapsed time keeps the experience consistent across all session durations and creates a reusable coaching system that can evolve independently of the timer itself.
+
+Status
+
+Accepted
