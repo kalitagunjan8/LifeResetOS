@@ -152,6 +152,8 @@ Manual Dependency Injection
 
 No Hilt/Koin during MVP.
 
+
+
 ProgressEngine (Domain Service)
 
 NotificationEngine (Domain Service)
@@ -165,6 +167,18 @@ Repositories remain the only data-access layer.
 Domain Services perform derived business calculations or orchestration only and depend exclusively on Repository instances.
 
 Future domain services should follow the same pattern.
+
+
+
+Navigation
+
+All primary application destinations are now first-class NavController routes.
+
+MainScaffold is a UI shell only (Scaffold + Bottom Navigation).
+
+Navigation state is owned by NavController rather than internal MainScaffold state.
+
+This enables notifications, future widgets, shortcuts and external deep-links to navigate directly to any primary destination.
 
 ---
 
@@ -540,36 +554,26 @@ v0.9.x  UI/UX Polish Pass
 
 v1.0    Play Store Release
 
-# Current Development Priority
 
+# Current Development Priority
 
 1.
 
-Navigation Deep Links (v0.7.1)
+Backup & Restore (v0.8.0)
 
 Goal:
 
-Allow every MainScaffold destination to be opened directly through NavController.
+Allow users to safely export and restore all Life Reset OS data.
 
 Priority
 
-✓ Home
+☐ Backup
 
-✓ Journey
+☐ Restore
 
-✓ Focus
+☐ Import validation
 
-✓ Progress
-
-✓ Profile
-
-Update notification PendingIntents to navigate directly to their intended destination rather than opening Home first.
-
-No UI redesign.
-
-No behaviour changes.
-
-Architecture refinement only.
+☐ Export validation
 
 2.
 
@@ -585,33 +589,21 @@ Future Focus Improvements
 
 3.
 
-Future Features
+Future Planned Work
 
-☐ Habits
+☐ UI/UX Polish Pass (v0.9.x)
 
-☐ Statistics
+☐ Beta Testing (v0.9)
 
-☐ Backup & Restore
+☐ Play Store Release (v1.0)
 
-☐ Achievements
-
-# Next Milestone
 
 # Next Milestone
 
-v0.7.1 — Navigation Deep Links
+v0.8.0 — Backup & Restore
 
-Objectives
-
-• Make every MainScaffold destination addressable through NavController.
-
-• Allow notifications to deep-link directly into the intended destination.
-
-• Remove the current Home-only deep-link limitation.
-
-• Preserve the existing user experience.
-
-This milestone is an architectural refinement only.
+Prerequisite complete:
+✓ Navigation Deep Links (v0.7.1)
 
 # Non-negotiable Principle
 

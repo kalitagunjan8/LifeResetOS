@@ -11,6 +11,27 @@
 
 All notable changes to Life Reset OS will be documented here.
 
+## v0.7.1
+
+- Refactored primary navigation to real NavController destinations
+- Converted MainScaffold into a UI shell only
+- Bottom navigation now driven by NavController state
+- Enabled direct notification deep-links to Home, Journey, Focus, Progress and Today's Actions
+- Preserved existing back-stack behavior while removing duplicate destinations
+
+## v0.7.0
+
+- Introduced NotificationEngine domain service
+- Added WorkManager-based notification scheduling
+- Added Daily Mission reminder
+- Added Today's Actions reminder
+- Added Focus Session reminder
+- Added Weekly Review reminder
+- Added notification channels and centralized notification helper
+- Added notification permission request flow
+- Added Application-level AppContainer initialization
+- Enabled notification deep-link infrastructure
+
 ## v0.6.0
 
 ### Added
