@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.zerosepaisa.liferesetos.data.local.entity.Task
 import kotlinx.coroutines.flow.Flow
+import androidx.room.OnConflictStrategy
 
 @Dao
 interface TaskDao {
@@ -47,4 +48,10 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     suspend fun getTaskById(taskId: Long): Task?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(tasks: List<Task>)
+
+    @Query("DELETE FROM tasks")
+    suspend fun deleteAll()
 }

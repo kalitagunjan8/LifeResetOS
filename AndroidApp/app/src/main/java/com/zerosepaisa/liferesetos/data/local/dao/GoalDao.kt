@@ -8,6 +8,7 @@ import androidx.room.Update
 import com.zerosepaisa.liferesetos.data.local.entity.Goal
 import com.zerosepaisa.liferesetos.data.local.entity.enums.GoalStatus
 import kotlinx.coroutines.flow.Flow
+import androidx.room.OnConflictStrategy
 
 @Dao
 interface GoalDao {
@@ -35,4 +36,10 @@ interface GoalDao {
 
     @Query("UPDATE goals SET status = :status WHERE id = :goalId")
     suspend fun updateStatus(goalId: Long, status: GoalStatus)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(goals: List<Goal>)
+
+    @Query("DELETE FROM goals")
+    suspend fun deleteAll()
 }

@@ -31,4 +31,8 @@ class GoalRepository(
 
     suspend fun updateStatus(goalId: Long, status: GoalStatus) =
         goalDao.updateStatus(goalId, status)
+
+    suspend fun deleteAllGoals() = goalDao.deleteAll()
+
+    suspend fun restoreGoals(goals: List<Goal>) = goalDao.insertAll(goals)
 }

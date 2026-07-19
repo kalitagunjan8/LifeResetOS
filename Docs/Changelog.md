@@ -11,6 +11,15 @@
 
 All notable changes to Life Reset OS will be documented here.
 
+## v0.8.0
+
+- Added BackupEngine domain service
+- Added Backup & Restore screen
+- Implemented JSON backup export using Storage Access Framework
+- Implemented full replace restore with relationship preservation
+- Added repository/DAO restore helpers
+- Added Kotlin Serialization support
+
 ## v0.7.1
 
 - Refactored primary navigation to real NavController destinations

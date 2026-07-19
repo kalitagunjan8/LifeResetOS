@@ -13,4 +13,8 @@ class MissionRepository(
 
     fun getActiveMission() =
         missionDao.getActiveMission()
+
+    suspend fun deleteAllMissions() = missionDao.deleteAll()
+
+    suspend fun restoreMissions(missions: List<Mission>) = missionDao.insertAll(missions)
 }

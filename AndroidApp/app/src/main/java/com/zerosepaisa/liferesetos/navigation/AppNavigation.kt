@@ -23,6 +23,7 @@ import com.zerosepaisa.liferesetos.feature.onboarding.WelcomeScreen
 import com.zerosepaisa.liferesetos.navigation.bottomnav.BottomNavItem
 import com.zerosepaisa.liferesetos.viewmodel.MainViewModel
 import com.zerosepaisa.liferesetos.feature.mission.MissionScreen
+import com.zerosepaisa.liferesetos.feature.backup.BackupScreen
 
 @Composable
 fun AppNavigation(
@@ -35,7 +36,9 @@ fun AppNavigation(
     NavHost(
         navController = navController,
         startDestination = Routes.SPLASH
-    ) {
+    )
+
+    {
 
         composable(Routes.SPLASH) {
             LaunchedEffect(isFirstLaunch) {
@@ -50,6 +53,7 @@ fun AppNavigation(
                 }
             }
         }
+
 
         composable(Routes.WELCOME) {
 
@@ -118,7 +122,25 @@ fun AppNavigation(
         composable(BottomNavItem.Profile.route) {
             MainScaffold(navController = navController) { modifier ->
                 ProfileScreen(
-                    modifier = modifier
+                    modifier = modifier,
+                    onBackupClick = {
+                        navController.navigate(Routes.BACKUP)
+                    }
+                )
+            }
+        }
+
+        composable(Routes.BACKUP) {
+            BackupScreen()
+        }
+
+        composable(BottomNavItem.Profile.route) {
+            MainScaffold(navController = navController) { modifier ->
+                ProfileScreen(
+                    modifier = modifier,
+                    onBackupClick = {
+                        navController.navigate(Routes.BACKUP)
+                    }
                 )
             }
         }

@@ -12,6 +12,7 @@ import com.zerosepaisa.liferesetos.data.repository.FocusSessionRepository
 import com.zerosepaisa.liferesetos.notifications.NotificationEngine
 import com.zerosepaisa.liferesetos.notifications.NotificationScheduler
 import com.zerosepaisa.liferesetos.progress.ProgressEngine
+import com.zerosepaisa.liferesetos.backup.BackupEngine
 
 class AppContainer(context: Context) {
 
@@ -46,5 +47,14 @@ class AppContainer(context: Context) {
 
     val notificationScheduler: NotificationScheduler by lazy {
         NotificationScheduler(context.applicationContext)
+    }
+
+    val backupEngine: BackupEngine by lazy {
+        BackupEngine(
+            missionRepository = missionRepository,
+            goalRepository = goalRepository,
+            taskRepository = taskRepository,
+            focusSessionRepository = focusSessionRepository
+        )
     }
 }

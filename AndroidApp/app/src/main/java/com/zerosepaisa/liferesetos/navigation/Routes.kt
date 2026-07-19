@@ -19,6 +19,10 @@ object Routes {
 
     const val PROGRESS = "progress"
 
+
+    const val BACKUP = "com/zerosepaisa/liferesetos/feature/backup"
+
+
     fun goalsRoute(goalId: Long? = null): String =
         if (goalId != null) "goals?goalId=$goalId" else "goals"
 

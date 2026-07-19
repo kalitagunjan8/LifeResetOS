@@ -38,4 +38,8 @@ class FocusSessionRepository(
      */
     fun getSessionsBetween(startMillis: Long, endMillis: Long) =
         focusSessionDao.getSessionsBetween(startMillis, endMillis)
+
+    suspend fun deleteAllSessions() = focusSessionDao.deleteAll()
+
+    suspend fun restoreSessions(sessions: List<FocusSession>) = focusSessionDao.insertAll(sessions)
 }

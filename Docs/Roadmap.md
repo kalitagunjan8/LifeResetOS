@@ -40,7 +40,7 @@ Smart Notifications
 - Focus Reminders
 - Weekly Review
 
-## v0.8
+## ✅ v0.8.0
 Backup & Restore
 
 ## v0.9

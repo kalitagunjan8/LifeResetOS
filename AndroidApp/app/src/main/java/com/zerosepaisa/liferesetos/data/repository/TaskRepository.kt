@@ -50,4 +50,8 @@ class TaskRepository(
 
     suspend fun getTaskById(taskId: Long) =
         taskDao.getTaskById(taskId)
+
+    suspend fun deleteAllTasks() = taskDao.deleteAll()
+
+    suspend fun restoreTasks(tasks: List<Task>) = taskDao.insertAll(tasks)
 }

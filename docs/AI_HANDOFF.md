@@ -559,24 +559,6 @@ v1.0    Play Store Release
 
 1.
 
-Backup & Restore (v0.8.0)
-
-Goal:
-
-Allow users to safely export and restore all Life Reset OS data.
-
-Priority
-
-☐ Backup
-
-☐ Restore
-
-☐ Import validation
-
-☐ Export validation
-
-2.
-
 Future Focus Improvements
 
 ☐ Real Broken Session detection
@@ -587,15 +569,21 @@ Future Focus Improvements
 
 ☐ Adaptive Focus Coaching (ADR-014)
 
+2.
+
+Future Features
+
+☐ Habits
+
+☐ Statistics
+
+☐ Achievements
+
 3.
 
-Future Planned Work
+Pre-release
 
-☐ UI/UX Polish Pass (v0.9.x)
-
-☐ Beta Testing (v0.9)
-
-☐ Play Store Release (v1.0)
+☐ UI/UX Polish Pass (pre-v1.0)
 
 
 # Next Milestone
