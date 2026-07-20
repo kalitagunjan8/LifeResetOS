@@ -16,7 +16,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.zerosepaisa.liferesetos.data.repository.HabitCompletionRepository
 import kotlinx.coroutines.flow.map
+import com.zerosepaisa.liferesetos.streaks.HabitStreak
+import com.zerosepaisa.liferesetos.streaks.HabitStreakEngine
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 
+
+@OptIn(ExperimentalCoroutinesApi::class)
 class JourneyViewModel(
     application: Application
 ) : AndroidViewModel(application) {
@@ -37,6 +45,8 @@ class JourneyViewModel(
         AppDatabase.getInstance(application).habitCompletionDao()
     )
 
+    private val habitStreakEngine = HabitStreakEngine(habitCompletionRepository)
+
     private val _activeMission = MutableStateFlow<Mission?>(null)
     val activeMission: StateFlow<Mission?> = _activeMission.asStateFlow()
 
@@ -48,6 +58,9 @@ class JourneyViewModel(
 
     private val _todaysCompletedHabitIds = MutableStateFlow<Set<Long>>(emptySet())
     val todaysCompletedHabitIds: StateFlow<Set<Long>> = _todaysCompletedHabitIds.asStateFlow()
+
+    private val _habitStreaks = MutableStateFlow<Map<Long, HabitStreak>>(emptyMap())
+    val habitStreaks: StateFlow<Map<Long, HabitStreak>> = _habitStreaks.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -73,6 +86,24 @@ class JourneyViewModel(
                 .map { completions -> completions.map { it.habitId }.toSet() }
                 .collect {
                     _todaysCompletedHabitIds.value = it
+                }
+        }
+
+        viewModelScope.launch {
+            habitRepository.getAllHabits()
+                .flatMapLatest { habits ->
+                    if (habits.isEmpty()) {
+                        flowOf(emptyMap())
+                    } else {
+                        val perHabitFlows = habits.map { habit ->
+                            habitStreakEngine.observeStreakForHabit(habit.id)
+                                .map { streak -> habit.id to streak }
+                        }
+                        combine(perHabitFlows) { pairs -> pairs.toMap() }
+                    }
+                }
+                .collect {
+                    _habitStreaks.value = it
                 }
         }
     }

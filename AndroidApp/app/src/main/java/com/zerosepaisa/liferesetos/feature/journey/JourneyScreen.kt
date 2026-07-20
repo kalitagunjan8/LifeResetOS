@@ -35,6 +35,7 @@ import com.zerosepaisa.liferesetos.data.local.entity.Goal
 import com.zerosepaisa.liferesetos.data.local.entity.Habit
 import androidx.compose.material3.Checkbox
 import androidx.compose.ui.text.style.TextDecoration
+import com.zerosepaisa.liferesetos.streaks.HabitStreak
 
 @Composable
 fun JourneyScreen(
@@ -47,6 +48,7 @@ fun JourneyScreen(
     val goals by viewModel.activeGoals.collectAsState()
     val habits by viewModel.habits.collectAsState()
     val todaysCompletedHabitIds by viewModel.todaysCompletedHabitIds.collectAsState()
+    val habitStreaks by viewModel.habitStreaks.collectAsState()
 
     var showAddHabitDialog by remember { mutableStateOf(false) }
     var editingHabit by remember { mutableStateOf<Habit?>(null) }
@@ -139,6 +141,7 @@ fun JourneyScreen(
                     HabitCard(
                         habit = habit,
                         isCompletedToday = todaysCompletedHabitIds.contains(habit.id),
+                        streak = habitStreaks[habit.id],
                         onClick = { editingHabit = habit },
                         onToggleComplete = { viewModel.toggleHabitCompletion(habit) }
                     )
@@ -233,6 +236,7 @@ private fun GoalCard(
 private fun HabitCard(
     habit: Habit,
     isCompletedToday: Boolean,
+    streak: HabitStreak?,
     onClick: () -> Unit = {},
     onToggleComplete: () -> Unit = {}
 ) {
@@ -281,6 +285,20 @@ private fun HabitCard(
                     },
                     style = MaterialTheme.typography.bodyMedium
                 )
+
+                if (streak != null && streak.currentStreak > 0) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "🔥 ${streak.currentStreak} day streak",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    if (streak.longestStreak > streak.currentStreak) {
+                        Text(
+                            text = "Best: ${streak.longestStreak} days",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
             }
         }
     }

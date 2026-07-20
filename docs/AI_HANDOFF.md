@@ -559,27 +559,25 @@ v1.0    Play Store Release
 
 1.
 
-Habit Streaks (v0.8.3)
+Habit Reminders (v0.8.4)
 
 Goal:
 
-Build streak tracking on top of the completed Habit system.
+Allow users to schedule reminders for individual Habits.
 
 Priority
 
-☐ Current streak
+☐ Enable/Disable reminder
 
-☐ Longest streak
+☐ Reminder time
 
-☐ Missed-day handling
+☐ WorkManager scheduling
 
-☐ Streak display in Journey
+☐ Notification integration
 
 2.
 
 Future Habit Improvements
-
-☐ Habit reminders
 
 ☐ ProgressEngine integration
 
@@ -588,6 +586,10 @@ Future Habit Improvements
 3.
 
 Future Features
+
+☐ Journey UX consolidation
+    - Move Task management under Journey alongside Goals and Habits before v1.0
+    - Keep Home focused on execution (Today's Actions, Focus, Progress)
 
 ☐ Backup validation improvements
 

@@ -460,3 +460,27 @@ Using completion percentage rather than elapsed time keeps the experience consis
 Status
 
 Accepted
+
+
+---
+
+# Future Architecture / UX Notes
+
+### Journey Consolidation (Planned)
+
+Before v1.0, Task management should move under the Journey screen alongside Goals and Habits.
+
+Target structure:
+
+Journey
+- Goals
+  - Tasks
+- Habits
+- (Later) Achievements
+
+Home should remain the execution dashboard, focused on:
+- Today's Actions
+- Focus Sessions
+- Progress
+
+This is a planned UX/navigation refinement only and does not affect the underlying domain architecture.

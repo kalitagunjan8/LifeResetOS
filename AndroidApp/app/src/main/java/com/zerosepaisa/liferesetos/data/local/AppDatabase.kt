@@ -17,6 +17,8 @@ import com.zerosepaisa.liferesetos.data.local.dao.MissionDao
 import com.zerosepaisa.liferesetos.data.local.entity.Mission
 import com.zerosepaisa.liferesetos.data.local.dao.HabitCompletionDao
 import com.zerosepaisa.liferesetos.data.local.entity.HabitCompletion
+import android.util.Log
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [
@@ -54,7 +56,16 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                     // MVP / pre-release: no users to preserve data for yet.
                     // Remove this and add a real Migration before release.
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(dropAllTables = true)
+                    .addCallback(object : RoomDatabase.Callback() {
+                        override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
+                            Log.e("AppDatabase", "DESTRUCTIVE MIGRATION TRIGGERED — DB WIPED")
+                        }
+                        override fun onOpen(db: SupportSQLiteDatabase) {
+                            super.onOpen(db)
+                            Log.e("AppDatabase", "DB opened. version=${db.version}")
+                        }
+                    })
                     .build().also { INSTANCE = it }
             }
         }

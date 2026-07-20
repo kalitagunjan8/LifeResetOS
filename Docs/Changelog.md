@@ -11,6 +11,32 @@
 
 All notable changes to Life Reset OS will be documented here.
 
+### Fixed
+
+- Resolved a critical Room database initialization issue where AppContainer created a second AppDatabase instance.
+- Eliminated the possibility of unintended destructive migrations caused by multiple Room instances accessing the same database.
+- AppContainer now reuses the shared AppDatabase singleton.
+- Added temporary database diagnostic logging to monitor future schema migrations.
+
+## v0.8.3
+
+Habit Streaks
+
+- Added HabitStreakEngine domain service
+- Added Current Streak calculation
+- Added Longest Streak calculation
+- Added streak display to Journey → Habits
+- Implemented consecutive-day streak logic
+- Preserved ADR-013 architecture (derived business logic in domain service)
+
+
+Infrastructure
+
+- Fixed duplicate Room database initialization
+- AppContainer now reuses AppDatabase singleton
+- Eliminated unintended destructive migration race condition
+- Added temporary Room diagnostic logging
+
 ## v0.8.2
 
 Habit Completion
