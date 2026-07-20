@@ -7,20 +7,32 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zerosepaisa.liferesetos.data.local.entity.Goal
+import com.zerosepaisa.liferesetos.data.local.entity.Habit
 
 @Composable
 fun JourneyScreen(
@@ -31,6 +43,11 @@ fun JourneyScreen(
     val viewModel: JourneyViewModel = viewModel()
     val mission by viewModel.activeMission.collectAsState()
     val goals by viewModel.activeGoals.collectAsState()
+    val habits by viewModel.habits.collectAsState()
+
+    var showAddHabitDialog by remember { mutableStateOf(false) }
+    var editingHabit by remember { mutableStateOf<Habit?>(null) }
+    var deleteConfirmHabit by remember { mutableStateOf<Habit?>(null) }
 
     Scaffold(
         modifier = modifier,
@@ -89,7 +106,91 @@ fun JourneyScreen(
                     )
                 }
             }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "🔁 Habits",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    IconButton(onClick = { showAddHabitDialog = true }) {
+                        Icon(Icons.Filled.Add, contentDescription = "Add Habit")
+                    }
+                }
+            }
+
+            if (habits.isEmpty()) {
+                item {
+                    Text(
+                        text = "No habits yet. Tap + to add one.",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            } else {
+                items(habits, key = { it.id }) { habit ->
+                    HabitCard(
+                        habit = habit,
+                        onClick = { editingHabit = habit }
+                    )
+                }
+            }
         }
+    }
+
+    if (showAddHabitDialog) {
+        AddHabitDialog(
+            onDismiss = { showAddHabitDialog = false },
+            onConfirm = { title, description ->
+                viewModel.createHabit(title, description)
+                showAddHabitDialog = false
+            }
+        )
+    }
+
+    editingHabit?.let { habit ->
+        EditHabitDialog(
+            habit = habit,
+            onDismiss = { editingHabit = null },
+            onUpdate = { title, description, isActive ->
+                viewModel.updateHabit(habit, title, description, isActive)
+                editingHabit = null
+            },
+            onDeleteRequest = {
+                deleteConfirmHabit = habit
+                editingHabit = null
+            }
+        )
+    }
+
+    deleteConfirmHabit?.let { habit ->
+        AlertDialog(
+            onDismissRequest = { deleteConfirmHabit = null },
+            title = { Text("Delete this Habit?") },
+            text = { Text("This can't be undone.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteHabit(habit)
+                        deleteConfirmHabit = null
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { deleteConfirmHabit = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 
@@ -121,4 +222,185 @@ private fun GoalCard(
             )
         }
     }
+}
+
+@Composable
+private fun HabitCard(
+    habit: Habit,
+    onClick: () -> Unit = {}
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = habit.title,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            if (habit.description.isNotBlank()) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = habit.description,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = if (habit.isActive) "Active" else "Inactive",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+@Composable
+private fun AddHabitDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (String, String) -> Unit
+) {
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var showError by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Add Habit") },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = {
+                        title = it
+                        if (it.isNotBlank()) showError = false
+                    },
+                    label = { Text("Title") },
+                    isError = showError,
+                    supportingText = {
+                        if (showError) Text("Title is required")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Description (optional)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (title.isBlank()) {
+                        showError = true
+                    } else {
+                        onConfirm(title.trim(), description.trim())
+                    }
+                }
+            ) {
+                Text("Add")
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@Composable
+private fun EditHabitDialog(
+    habit: Habit,
+    onDismiss: () -> Unit,
+    onUpdate: (String, String, Boolean) -> Unit,
+    onDeleteRequest: () -> Unit
+) {
+    var title by remember { mutableStateOf(habit.title) }
+    var description by remember { mutableStateOf(habit.description) }
+    var isActive by remember { mutableStateOf(habit.isActive) }
+    var showError by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit Habit") },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = {
+                        title = it
+                        if (it.isNotBlank()) showError = false
+                    },
+                    label = { Text("Title") },
+                    isError = showError,
+                    supportingText = {
+                        if (showError) Text("Title is required")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Description (optional)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(if (isActive) "Active" else "Inactive")
+                    Switch(
+                        checked = isActive,
+                        onCheckedChange = { isActive = it }
+                    )
+                }
+
+                OutlinedButton(
+                    onClick = onDeleteRequest,
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Delete Habit")
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (title.isBlank()) {
+                        showError = true
+                    } else {
+                        onUpdate(title.trim(), description.trim(), isActive)
+                    }
+                }
+            ) {
+                Text("Update")
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }

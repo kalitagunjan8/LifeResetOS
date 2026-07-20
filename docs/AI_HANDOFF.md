@@ -559,29 +559,41 @@ v1.0    Play Store Release
 
 1.
 
-Future Focus Improvements
+Habit Completion (v0.8.2)
 
-☐ Real Broken Session detection
+Goal:
 
-☐ Foreground Service timer
+Allow users to mark Habits as completed each day.
 
-☐ Survive process death
+Priority
 
-☐ Adaptive Focus Coaching (ADR-014)
+☐ Daily completion
+
+☐ Completion history
+
+☐ Habit completion UI
+
+☐ Reset for new day
 
 2.
 
-Future Features
+Future Habit Improvements
 
-☐ Habits
+☐ Streaks
 
-☐ Statistics
+☐ Reminders
 
-☐ Achievements
+☐ ProgressEngine integration
+
+☐ Habit statistics
 
 3.
 
-Pre-release
+Future Features
+
+☐ Backup validation improvements
+
+☐ Achievements
 
 ☐ UI/UX Polish Pass (pre-v1.0)
 

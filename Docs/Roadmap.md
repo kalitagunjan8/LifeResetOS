@@ -43,6 +43,26 @@ Smart Notifications
 ## ✅ v0.8.0
 Backup & Restore
 
+## ✅ v0.8.1
+Habits Foundation
+
+## 🔄 v0.8.2
+Habit Completion
+
+- Daily completion
+- Completion history
+- Completion UI
+- Daily reset
+
+## v0.8.3
+Habit Streaks
+
+## v0.8.4
+Habit Reminders
+
+## v0.8.5
+Habit Analytics
+
 ## v0.9
 UI / UX Polish
 Beta Preparation

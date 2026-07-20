@@ -11,6 +11,16 @@
 
 All notable changes to Life Reset OS will be documented here.
 
+## v0.8.1
+
+- Introduced Habit entity
+- Added Room integration for Habits
+- Added HabitRepository
+- Implemented full Habit CRUD
+- Integrated Habits into the Journey screen
+- Added Material 3 create/edit dialogs
+- Added delete confirmation workflow
+
 ## v0.8.0
 
 - Added BackupEngine domain service

@@ -1,5 +1,3 @@
-// di/AppContainer.kt (CORRECTED — NotificationEngine package fixed to match your convention: notifications, not domain)
-
 package com.zerosepaisa.liferesetos.di
 
 import android.content.Context
@@ -9,6 +7,7 @@ import com.zerosepaisa.liferesetos.data.repository.GoalRepository
 import com.zerosepaisa.liferesetos.data.repository.MissionRepository
 import com.zerosepaisa.liferesetos.data.repository.TaskRepository
 import com.zerosepaisa.liferesetos.data.repository.FocusSessionRepository
+import com.zerosepaisa.liferesetos.data.repository.HabitRepository
 import com.zerosepaisa.liferesetos.notifications.NotificationEngine
 import com.zerosepaisa.liferesetos.notifications.NotificationScheduler
 import com.zerosepaisa.liferesetos.progress.ProgressEngine
@@ -28,6 +27,7 @@ class AppContainer(context: Context) {
     val goalRepository = GoalRepository(database.goalDao())
     val taskRepository = TaskRepository(database.taskDao())
     val focusSessionRepository = FocusSessionRepository(database.focusSessionDao())
+    val habitRepository = HabitRepository(database.habitDao())
 
     val progressEngine = ProgressEngine(
         missionRepository = missionRepository,
