@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.zerosepaisa.liferesetos.data.repository.HabitCompletionRepository
+import kotlinx.coroutines.flow.map
 
 class JourneyViewModel(
     application: Application
@@ -31,6 +33,10 @@ class JourneyViewModel(
         AppDatabase.getInstance(application).habitDao()
     )
 
+    private val habitCompletionRepository = HabitCompletionRepository(
+        AppDatabase.getInstance(application).habitCompletionDao()
+    )
+
     private val _activeMission = MutableStateFlow<Mission?>(null)
     val activeMission: StateFlow<Mission?> = _activeMission.asStateFlow()
 
@@ -39,6 +45,9 @@ class JourneyViewModel(
 
     private val _habits = MutableStateFlow<List<Habit>>(emptyList())
     val habits: StateFlow<List<Habit>> = _habits.asStateFlow()
+
+    private val _todaysCompletedHabitIds = MutableStateFlow<Set<Long>>(emptySet())
+    val todaysCompletedHabitIds: StateFlow<Set<Long>> = _todaysCompletedHabitIds.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -57,6 +66,14 @@ class JourneyViewModel(
             habitRepository.getAllHabits().collect {
                 _habits.value = it
             }
+        }
+
+        viewModelScope.launch {
+            habitCompletionRepository.getTodaysCompletions()
+                .map { completions -> completions.map { it.habitId }.toSet() }
+                .collect {
+                    _todaysCompletedHabitIds.value = it
+                }
         }
     }
 
@@ -95,6 +112,12 @@ class JourneyViewModel(
     fun deleteHabit(habit: Habit) {
         viewModelScope.launch {
             habitRepository.deleteHabit(habit)
+        }
+    }
+
+    fun toggleHabitCompletion(habit: Habit) {
+        viewModelScope.launch {
+            habitCompletionRepository.toggleTodaysCompletion(habit.id)
         }
     }
 }

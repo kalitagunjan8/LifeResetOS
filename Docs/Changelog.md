@@ -11,6 +11,18 @@
 
 All notable changes to Life Reset OS will be documented here.
 
+## v0.8.2
+
+Habit Completion
+
+- Added HabitCompletion entity
+- Added HabitCompletion DAO
+- Added HabitCompletionRepository
+- Added one-completion-per-day tracking
+- Added persistent daily completion state
+- Added checkbox UI for daily completion
+- Added completed visual state for Habits
+
 ## v0.8.1
 
 - Introduced Habit entity

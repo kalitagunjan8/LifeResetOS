@@ -12,6 +12,7 @@ import com.zerosepaisa.liferesetos.notifications.NotificationEngine
 import com.zerosepaisa.liferesetos.notifications.NotificationScheduler
 import com.zerosepaisa.liferesetos.progress.ProgressEngine
 import com.zerosepaisa.liferesetos.backup.BackupEngine
+import com.zerosepaisa.liferesetos.data.repository.HabitCompletionRepository
 
 class AppContainer(context: Context) {
 
@@ -28,6 +29,7 @@ class AppContainer(context: Context) {
     val taskRepository = TaskRepository(database.taskDao())
     val focusSessionRepository = FocusSessionRepository(database.focusSessionDao())
     val habitRepository = HabitRepository(database.habitDao())
+    val habitCompletionRepository = HabitCompletionRepository(database.habitCompletionDao())
 
     val progressEngine = ProgressEngine(
         missionRepository = missionRepository,

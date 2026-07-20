@@ -46,16 +46,15 @@ Backup & Restore
 ## ✅ v0.8.1
 Habits Foundation
 
-## 🔄 v0.8.2
+## ✅ v0.8.2
 Habit Completion
-
-- Daily completion
-- Completion history
-- Completion UI
-- Daily reset
 
 ## v0.8.3
 Habit Streaks
+Current streak
+- Longest streak
+- Missed-day handling
+- Journey streak display
 
 ## v0.8.4
 Habit Reminders

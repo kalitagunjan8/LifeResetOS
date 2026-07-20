@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zerosepaisa.liferesetos.data.local.entity.Goal
 import com.zerosepaisa.liferesetos.data.local.entity.Habit
+import androidx.compose.material3.Checkbox
+import androidx.compose.ui.text.style.TextDecoration
 
 @Composable
 fun JourneyScreen(
@@ -44,6 +46,7 @@ fun JourneyScreen(
     val mission by viewModel.activeMission.collectAsState()
     val goals by viewModel.activeGoals.collectAsState()
     val habits by viewModel.habits.collectAsState()
+    val todaysCompletedHabitIds by viewModel.todaysCompletedHabitIds.collectAsState()
 
     var showAddHabitDialog by remember { mutableStateOf(false) }
     var editingHabit by remember { mutableStateOf<Habit?>(null) }
@@ -135,7 +138,9 @@ fun JourneyScreen(
                 items(habits, key = { it.id }) { habit ->
                     HabitCard(
                         habit = habit,
-                        onClick = { editingHabit = habit }
+                        isCompletedToday = todaysCompletedHabitIds.contains(habit.id),
+                        onClick = { editingHabit = habit },
+                        onToggleComplete = { viewModel.toggleHabitCompletion(habit) }
                     )
                 }
             }
@@ -227,7 +232,9 @@ private fun GoalCard(
 @Composable
 private fun HabitCard(
     habit: Habit,
-    onClick: () -> Unit = {}
+    isCompletedToday: Boolean,
+    onClick: () -> Unit = {},
+    onToggleComplete: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
@@ -236,28 +243,45 @@ private fun HabitCard(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = habit.title,
-                style = MaterialTheme.typography.titleMedium
+            Checkbox(
+                checked = isCompletedToday,
+                onCheckedChange = { onToggleComplete() }
             )
 
-            if (habit.description.isNotBlank()) {
-                Spacer(modifier = Modifier.height(4.dp))
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
-                    text = habit.description,
+                    text = habit.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    textDecoration = if (isCompletedToday) TextDecoration.LineThrough else TextDecoration.None
+                )
+
+                if (habit.description.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = habit.description,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = when {
+                        isCompletedToday -> "Completed today"
+                        !habit.isActive -> "Inactive"
+                        else -> "Active"
+                    },
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = if (habit.isActive) "Active" else "Inactive",
-                style = MaterialTheme.typography.bodyMedium
-            )
         }
     }
 }

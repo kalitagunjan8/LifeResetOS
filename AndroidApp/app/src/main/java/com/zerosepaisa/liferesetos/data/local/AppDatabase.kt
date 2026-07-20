@@ -15,6 +15,8 @@ import com.zerosepaisa.liferesetos.data.local.entity.FocusSession
 import com.zerosepaisa.liferesetos.data.local.entity.Habit
 import com.zerosepaisa.liferesetos.data.local.dao.MissionDao
 import com.zerosepaisa.liferesetos.data.local.entity.Mission
+import com.zerosepaisa.liferesetos.data.local.dao.HabitCompletionDao
+import com.zerosepaisa.liferesetos.data.local.entity.HabitCompletion
 
 @Database(
     entities = [
@@ -22,9 +24,10 @@ import com.zerosepaisa.liferesetos.data.local.entity.Mission
         Mission::class,
         Task::class,
         FocusSession::class,
-        Habit::class
+        Habit::class,
+        HabitCompletion::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -35,6 +38,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
     abstract fun focusSessionDao(): FocusSessionDao
     abstract fun habitDao(): HabitDao
+
+    abstract fun habitCompletionDao(): HabitCompletionDao
 
     companion object {
         @Volatile

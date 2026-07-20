@@ -559,29 +559,27 @@ v1.0    Play Store Release
 
 1.
 
-Habit Completion (v0.8.2)
+Habit Streaks (v0.8.3)
 
 Goal:
 
-Allow users to mark Habits as completed each day.
+Build streak tracking on top of the completed Habit system.
 
 Priority
 
-☐ Daily completion
+☐ Current streak
 
-☐ Completion history
+☐ Longest streak
 
-☐ Habit completion UI
+☐ Missed-day handling
 
-☐ Reset for new day
+☐ Streak display in Journey
 
 2.
 
 Future Habit Improvements
 
-☐ Streaks
-
-☐ Reminders
+☐ Habit reminders
 
 ☐ ProgressEngine integration
 
@@ -596,7 +594,6 @@ Future Features
 ☐ Achievements
 
 ☐ UI/UX Polish Pass (pre-v1.0)
-
 
 # Next Milestone
 
