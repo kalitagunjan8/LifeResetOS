@@ -22,6 +22,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import com.zerosepaisa.liferesetos.notifications.HabitReminderScheduler
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -61,6 +62,8 @@ class JourneyViewModel(
 
     private val _habitStreaks = MutableStateFlow<Map<Long, HabitStreak>>(emptyMap())
     val habitStreaks: StateFlow<Map<Long, HabitStreak>> = _habitStreaks.asStateFlow()
+
+    private val habitReminderScheduler = HabitReminderScheduler(application)
 
     init {
         viewModelScope.launch {
@@ -108,16 +111,29 @@ class JourneyViewModel(
         }
     }
 
-    fun createHabit(title: String, description: String) {
+    fun createHabit(
+        title: String,
+        description: String,
+        reminderEnabled: Boolean = false,
+        reminderHour: Int? = null,
+        reminderMinute: Int? = null
+    ) {
         if (title.isBlank()) return
 
         viewModelScope.launch {
-            habitRepository.saveHabit(
+            val habitId = habitRepository.saveHabit(
                 Habit(
                     title = title,
-                    description = description
+                    description = description,
+                    reminderEnabled = reminderEnabled,
+                    reminderHour = reminderHour,
+                    reminderMinute = reminderMinute
                 )
             )
+
+            if (reminderEnabled && reminderHour != null && reminderMinute != null) {
+                habitReminderScheduler.scheduleReminder(habitId, reminderHour, reminderMinute)
+            }
         }
     }
 
@@ -125,7 +141,10 @@ class JourneyViewModel(
         original: Habit,
         title: String,
         description: String,
-        isActive: Boolean
+        isActive: Boolean,
+        reminderEnabled: Boolean = false,
+        reminderHour: Int? = null,
+        reminderMinute: Int? = null
     ) {
         if (title.isBlank()) return
 
@@ -134,15 +153,25 @@ class JourneyViewModel(
                 original.copy(
                     title = title,
                     description = description,
-                    isActive = isActive
+                    isActive = isActive,
+                    reminderEnabled = reminderEnabled,
+                    reminderHour = reminderHour,
+                    reminderMinute = reminderMinute
                 )
             )
+
+            if (reminderEnabled && reminderHour != null && reminderMinute != null) {
+                habitReminderScheduler.scheduleReminder(original.id, reminderHour, reminderMinute)
+            } else {
+                habitReminderScheduler.cancelReminder(original.id)
+            }
         }
     }
 
     fun deleteHabit(habit: Habit) {
         viewModelScope.launch {
             habitRepository.deleteHabit(habit)
+            habitReminderScheduler.cancelReminder(habit.id)
         }
     }
 

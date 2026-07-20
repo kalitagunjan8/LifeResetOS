@@ -559,33 +559,25 @@ v1.0    Play Store Release
 
 1.
 
-Habit Reminders (v0.8.4)
+Habit Analytics (v0.8.5)
 
 Goal:
 
-Allow users to schedule reminders for individual Habits.
+Integrate Habits into ProgressEngine and expose meaningful analytics.
 
 Priority
 
-☐ Enable/Disable reminder
+☐ Habit completion rate
 
-☐ Reminder time
+☐ Weekly & monthly completion
 
-☐ WorkManager scheduling
+☐ Best-performing habits
 
-☐ Notification integration
+☐ Progress screen integration
 
 2.
 
-Future Habit Improvements
-
-☐ ProgressEngine integration
-
-☐ Habit statistics
-
-3.
-
-Future Features
+Future Improvements
 
 ☐ Journey UX consolidation
     - Move Task management under Journey alongside Goals and Habits before v1.0
@@ -593,9 +585,19 @@ Future Features
 
 ☐ Backup validation improvements
 
-☐ Achievements
+3.
 
-☐ UI/UX Polish Pass (pre-v1.0)
+Pre-Release Requirements (Must Complete Before v1.0)
+
+☐ Replace fallbackToDestructiveMigration() with proper Room Migration objects.
+
+☐ Verify upgrade path across every schema version.
+
+☐ Remove temporary Room diagnostic logging.
+
+☐ UI/UX Polish Pass.
+
+☐ Play Store release preparation.
 
 # Next Milestone
 

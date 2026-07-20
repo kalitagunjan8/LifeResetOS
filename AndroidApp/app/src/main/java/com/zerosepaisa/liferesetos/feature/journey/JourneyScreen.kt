@@ -36,6 +36,12 @@ import com.zerosepaisa.liferesetos.data.local.entity.Habit
 import androidx.compose.material3.Checkbox
 import androidx.compose.ui.text.style.TextDecoration
 import com.zerosepaisa.liferesetos.streaks.HabitStreak
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
+import java.util.Locale
 
 @Composable
 fun JourneyScreen(
@@ -153,8 +159,8 @@ fun JourneyScreen(
     if (showAddHabitDialog) {
         AddHabitDialog(
             onDismiss = { showAddHabitDialog = false },
-            onConfirm = { title, description ->
-                viewModel.createHabit(title, description)
+            onConfirm = { title, description, reminderEnabled, reminderHour, reminderMinute ->
+                viewModel.createHabit(title, description, reminderEnabled, reminderHour, reminderMinute)
                 showAddHabitDialog = false
             }
         )
@@ -164,8 +170,11 @@ fun JourneyScreen(
         EditHabitDialog(
             habit = habit,
             onDismiss = { editingHabit = null },
-            onUpdate = { title, description, isActive ->
-                viewModel.updateHabit(habit, title, description, isActive)
+            onUpdate = { title, description, isActive, reminderEnabled, reminderHour, reminderMinute ->
+                viewModel.updateHabit(
+                    habit, title, description, isActive,
+                    reminderEnabled, reminderHour, reminderMinute
+                )
                 editingHabit = null
             },
             onDeleteRequest = {
@@ -261,11 +270,21 @@ private fun HabitCard(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                Text(
-                    text = habit.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    textDecoration = if (isCompletedToday) TextDecoration.LineThrough else TextDecoration.None
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = habit.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        textDecoration = if (isCompletedToday) TextDecoration.LineThrough else TextDecoration.None
+                    )
+                    if (habit.reminderEnabled) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Icon(
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "Reminder enabled",
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
 
                 if (habit.description.isNotBlank()) {
                     Spacer(modifier = Modifier.height(4.dp))
@@ -304,14 +323,18 @@ private fun HabitCard(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddHabitDialog(
     onDismiss: () -> Unit,
-    onConfirm: (String, String) -> Unit
+    onConfirm: (String, String, Boolean, Int?, Int?) -> Unit
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
+    var reminderEnabled by remember { mutableStateOf(false) }
+    var reminderHour by remember { mutableStateOf<Int?>(null) }
+    var reminderMinute by remember { mutableStateOf<Int?>(null) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -340,6 +363,17 @@ private fun AddHabitDialog(
                     label = { Text("Description (optional)") },
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                ReminderSection(
+                    reminderEnabled = reminderEnabled,
+                    reminderHour = reminderHour,
+                    reminderMinute = reminderMinute,
+                    onReminderEnabledChange = { reminderEnabled = it },
+                    onTimeSelected = { hour, minute ->
+                        reminderHour = hour
+                        reminderMinute = minute
+                    }
+                )
             }
         },
         confirmButton = {
@@ -348,7 +382,7 @@ private fun AddHabitDialog(
                     if (title.isBlank()) {
                         showError = true
                     } else {
-                        onConfirm(title.trim(), description.trim())
+                        onConfirm(title.trim(), description.trim(), reminderEnabled, reminderHour, reminderMinute)
                     }
                 }
             ) {
@@ -363,17 +397,21 @@ private fun AddHabitDialog(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditHabitDialog(
     habit: Habit,
     onDismiss: () -> Unit,
-    onUpdate: (String, String, Boolean) -> Unit,
+    onUpdate: (String, String, Boolean, Boolean, Int?, Int?) -> Unit,
     onDeleteRequest: () -> Unit
 ) {
     var title by remember { mutableStateOf(habit.title) }
     var description by remember { mutableStateOf(habit.description) }
     var isActive by remember { mutableStateOf(habit.isActive) }
     var showError by remember { mutableStateOf(false) }
+    var reminderEnabled by remember { mutableStateOf(habit.reminderEnabled) }
+    var reminderHour by remember { mutableStateOf(habit.reminderHour) }
+    var reminderMinute by remember { mutableStateOf(habit.reminderMinute) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -415,6 +453,17 @@ private fun EditHabitDialog(
                     )
                 }
 
+                ReminderSection(
+                    reminderEnabled = reminderEnabled,
+                    reminderHour = reminderHour,
+                    reminderMinute = reminderMinute,
+                    onReminderEnabledChange = { reminderEnabled = it },
+                    onTimeSelected = { hour, minute ->
+                        reminderHour = hour
+                        reminderMinute = minute
+                    }
+                )
+
                 OutlinedButton(
                     onClick = onDeleteRequest,
                     colors = ButtonDefaults.outlinedButtonColors(
@@ -432,7 +481,7 @@ private fun EditHabitDialog(
                     if (title.isBlank()) {
                         showError = true
                     } else {
-                        onUpdate(title.trim(), description.trim(), isActive)
+                        onUpdate(title.trim(), description.trim(), isActive, reminderEnabled, reminderHour, reminderMinute)
                     }
                 }
             ) {
@@ -445,4 +494,74 @@ private fun EditHabitDialog(
             }
         }
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ReminderSection(
+    reminderEnabled: Boolean,
+    reminderHour: Int?,
+    reminderMinute: Int?,
+    onReminderEnabledChange: (Boolean) -> Unit,
+    onTimeSelected: (Int, Int) -> Unit
+) {
+    var showTimePicker by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text("Remind me")
+        Switch(
+            checked = reminderEnabled,
+            onCheckedChange = onReminderEnabledChange
+        )
+    }
+
+    if (reminderEnabled) {
+        OutlinedButton(onClick = { showTimePicker = true }) {
+            Text(formatReminderTime(reminderHour, reminderMinute))
+        }
+    }
+
+    if (showTimePicker) {
+        val timePickerState = rememberTimePickerState(
+            initialHour = reminderHour ?: 9,
+            initialMinute = reminderMinute ?: 0,
+            is24Hour = false
+        )
+
+        AlertDialog(
+            onDismissRequest = { showTimePicker = false },
+            title = { Text("Reminder Time") },
+            text = { TimePicker(state = timePickerState) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onTimeSelected(timePickerState.hour, timePickerState.minute)
+                        showTimePicker = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTimePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+}
+
+private fun formatReminderTime(hour: Int?, minute: Int?): String {
+    if (hour == null || minute == null) return "Set time"
+    val amPm = if (hour < 12) "AM" else "PM"
+    val displayHour = when {
+        hour == 0 -> 12
+        hour > 12 -> hour - 12
+        else -> hour
+    }
+    return String.format(Locale.getDefault(), "%d:%02d %s", displayHour, minute, amPm)
 }

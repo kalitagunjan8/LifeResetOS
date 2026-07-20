@@ -18,6 +18,8 @@ object NotificationHelper {
 
     const val EXTRA_DEEP_LINK_ROUTE = "deep_link_route"
 
+    private const val HABIT_REMINDER_ID_BASE = 2000
+
     private fun hasPermission(context: Context): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
         return ActivityCompat.checkSelfPermission(
@@ -115,5 +117,23 @@ object NotificationHelper {
             .build()
 
         NotificationManagerCompat.from(context).notify(1004, notification)
+    }
+
+    @SuppressLint("MissingPermission")
+    fun showHabitReminder(context: Context, habitId: Long, habitTitle: String) {
+        if (!hasPermission(context)) return
+
+        val notificationId = HABIT_REMINDER_ID_BASE + habitId.toInt()
+
+        val notification = NotificationCompat.Builder(context, NotificationChannels.HABIT_REMINDER)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle("Habit Reminder")
+            .setContentText("Time for: $habitTitle")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(buildPendingIntent(context, Routes.JOURNEY, notificationId))
+            .setAutoCancel(true)
+            .build()
+
+        NotificationManagerCompat.from(context).notify(notificationId, notification)
     }
 }

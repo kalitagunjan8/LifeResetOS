@@ -11,6 +11,8 @@ object NotificationChannels {
     const val FOCUS_REMINDER = "channel_focus_reminder"
     const val WEEKLY_REVIEW = "channel_weekly_review"
 
+    const val HABIT_REMINDER = "channel_habit_reminder"
+
     fun createAll(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
@@ -46,6 +48,14 @@ object NotificationChannels {
                 "Weekly Review",
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply { description = "Weekly summary of your Progress" }
+        )
+
+        manager.createNotificationChannel(
+            NotificationChannel(
+                HABIT_REMINDER,
+                "Habit Reminder",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply { description = "Reminds you to complete a scheduled Habit" }
         )
     }
 }

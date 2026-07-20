@@ -27,5 +27,10 @@ data class Habit(
     /**
      * Creation timestamp.
      */
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+
+    val reminderEnabled: Boolean = false,
+
+    val reminderHour: Int? = null,
+    val reminderMinute: Int? = null
 )

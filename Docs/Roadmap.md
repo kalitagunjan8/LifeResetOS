@@ -52,7 +52,7 @@ Habit Completion
 ## ✅ v0.8.3
 Habit Streaks
 
-## 🔄 v0.8.4
+## ✅ v0.8.4
 Habit Reminders
 
 - Enable/Disable reminders
@@ -60,12 +60,46 @@ Habit Reminders
 - WorkManager scheduling
 - Notification integration
 
-## v0.8.5
+## 🔄 v0.8.5
 Habit Analytics
 
+- Habit completion rate
+- Weekly/monthly completion
+- ProgressEngine integration
+- Progress screen updates
+
 ## v0.9
-UI / UX Polish
-Beta Preparation
+
+Pre-Release Hardening
+
+### UI / UX Polish
+
+- Consistent spacing and alignment
+- Typography review
+- Empty states
+- Loading states
+- Dialog consistency
+- Navigation flow review
+- Accessibility improvements
+- Material 3 polish
+- Final icon review
+- Micro animations (where appropriate)
+
+### Beta Preparation
+
+- End-to-end testing
+- Bug fixing
+- Performance review
+- Crash testing
+- Internal beta checklist
+
+### Room Migration Hardening
+
+- Replace fallbackToDestructiveMigration()
+- Implement proper Room Migration objects
+- Validate every schema upgrade
+- Remove temporary Room diagnostic logging
+- Blocking requirement before v1.0
 
 ## v1.0
 Play Store Release

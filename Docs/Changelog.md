@@ -18,6 +18,22 @@ All notable changes to Life Reset OS will be documented here.
 - AppContainer now reuses the shared AppDatabase singleton.
 - Added temporary database diagnostic logging to monitor future schema migrations.
 
+## v0.8.4
+
+Habit Reminders
+
+- Added per-Habit daily reminders
+- Added reminder enable/disable
+- Added reminder time selection
+- Reused existing notification infrastructure
+- Added HabitReminderScheduler
+- Added HabitReminderWorker
+- Added reminder indicator in Journey
+
+Infrastructure
+
+- Database schema updated to v7
+
 ## v0.8.3
 
 Habit Streaks
