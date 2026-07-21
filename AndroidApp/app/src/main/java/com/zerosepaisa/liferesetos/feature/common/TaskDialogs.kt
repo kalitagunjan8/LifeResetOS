@@ -28,6 +28,8 @@ import com.zerosepaisa.liferesetos.data.local.entity.Task
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
 
 /**
  * Shared Task dialogs. Extracted from GoalDetailScreen so they can be
@@ -37,11 +39,14 @@ import java.util.Locale
 @Composable
 fun AddTaskDialog(
     onDismiss: () -> Unit,
-    onConfirm: (String, Long?) -> Unit
+    onConfirm: (String, Long?, Int?, Int?, Int?) -> Unit
 ) {
     var title by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
     var scheduledDate by remember { mutableStateOf<Long?>(null) }
+    var startTimeMinutes by remember { mutableStateOf<Int?>(null) }
+    var endTimeMinutes by remember { mutableStateOf<Int?>(null) }
+    var estimatedDurationText by remember { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -68,6 +73,25 @@ fun AddTaskDialog(
                     selectedDateMillis = scheduledDate,
                     onDateSelected = { scheduledDate = it }
                 )
+
+                TaskTimePickerField(
+                    label = "Start time",
+                    selectedMinutes = startTimeMinutes,
+                    onTimeSelected = { startTimeMinutes = it }
+                )
+
+                TaskTimePickerField(
+                    label = "End time",
+                    selectedMinutes = endTimeMinutes,
+                    onTimeSelected = { endTimeMinutes = it }
+                )
+
+                OutlinedTextField(
+                    value = estimatedDurationText,
+                    onValueChange = { estimatedDurationText = it },
+                    label = { Text("Estimated duration (min, optional)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         },
         confirmButton = {
@@ -76,7 +100,13 @@ fun AddTaskDialog(
                     if (title.isBlank()) {
                         showError = true
                     } else {
-                        onConfirm(title.trim(), scheduledDate)
+                        onConfirm(
+                            title.trim(),
+                            scheduledDate,
+                            startTimeMinutes,
+                            endTimeMinutes,
+                            estimatedDurationText.toIntOrNull()
+                        )
                     }
                 }
             ) {
@@ -96,12 +126,17 @@ fun AddTaskDialog(
 fun EditTaskDialog(
     task: Task,
     onDismiss: () -> Unit,
-    onUpdate: (String, Long?) -> Unit,
+    onUpdate: (String, Long?, Int?, Int?, Int?) -> Unit,
     onDeleteRequest: () -> Unit
 ) {
     var title by remember { mutableStateOf(task.title) }
     var showError by remember { mutableStateOf(false) }
     var scheduledDate by remember { mutableStateOf(task.scheduledDate) }
+    var startTimeMinutes by remember { mutableStateOf(task.startTimeMinutes) }
+    var endTimeMinutes by remember { mutableStateOf(task.endTimeMinutes) }
+    var estimatedDurationText by remember {
+        mutableStateOf(task.estimatedDurationMinutes?.toString() ?: "")
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -129,6 +164,25 @@ fun EditTaskDialog(
                     onDateSelected = { scheduledDate = it }
                 )
 
+                TaskTimePickerField(
+                    label = "Start time",
+                    selectedMinutes = startTimeMinutes,
+                    onTimeSelected = { startTimeMinutes = it }
+                )
+
+                TaskTimePickerField(
+                    label = "End time",
+                    selectedMinutes = endTimeMinutes,
+                    onTimeSelected = { endTimeMinutes = it }
+                )
+
+                OutlinedTextField(
+                    value = estimatedDurationText,
+                    onValueChange = { estimatedDurationText = it },
+                    label = { Text("Estimated duration (min, optional)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
                 OutlinedButton(
                     onClick = onDeleteRequest,
                     colors = ButtonDefaults.outlinedButtonColors(
@@ -146,7 +200,13 @@ fun EditTaskDialog(
                     if (title.isBlank()) {
                         showError = true
                     } else {
-                        onUpdate(title.trim(), scheduledDate)
+                        onUpdate(
+                            title.trim(),
+                            scheduledDate,
+                            startTimeMinutes,
+                            endTimeMinutes,
+                            estimatedDurationText.toIntOrNull()
+                        )
                     }
                 }
             ) {
@@ -224,4 +284,78 @@ fun TaskDatePickerField(
             DatePicker(state = datePickerState)
         }
     }
+}
+
+/**
+ * Shared start/end time picker field used by both Add and Edit Task
+ * dialogs (per ADR-015 Scheduling Philosophy: Start Time / End Time are
+ * independent optional fields).
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TaskTimePickerField(
+    label: String,
+    selectedMinutes: Int?,
+    onTimeSelected: (Int?) -> Unit
+) {
+    var showPicker by remember { mutableStateOf(false) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        OutlinedButton(onClick = { showPicker = true }) {
+            Text(selectedMinutes?.let { formatMinutesOfDay(it) } ?: label)
+        }
+
+        if (selectedMinutes != null) {
+            OutlinedButton(onClick = { onTimeSelected(null) }) {
+                Text("Clear")
+            }
+        }
+    }
+
+    if (showPicker) {
+        val timePickerState = rememberTimePickerState(
+            initialHour = selectedMinutes?.let { it / 60 } ?: 9,
+            initialMinute = selectedMinutes?.let { it % 60 } ?: 0,
+            is24Hour = false
+        )
+
+        AlertDialog(
+            onDismissRequest = { showPicker = false },
+            title = { Text(label) },
+            text = { TimePicker(state = timePickerState) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onTimeSelected(timePickerState.hour * 60 + timePickerState.minute)
+                        showPicker = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+}
+
+/**
+ * Formats minutes-since-midnight as a 12-hour clock string, e.g. 570 -> "9:30 AM".
+ */
+fun formatMinutesOfDay(minutes: Int): String {
+    val hour = minutes / 60
+    val minute = minutes % 60
+    val amPm = if (hour < 12) "AM" else "PM"
+    val displayHour = when {
+        hour == 0 -> 12
+        hour > 12 -> hour - 12
+        else -> hour
+    }
+    return String.format(Locale.getDefault(), "%d:%02d %s", displayHour, minute, amPm)
 }

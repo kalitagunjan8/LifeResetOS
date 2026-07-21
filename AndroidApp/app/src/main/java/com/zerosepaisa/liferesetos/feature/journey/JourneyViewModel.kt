@@ -221,7 +221,14 @@ class JourneyViewModel(
         }
     }
 
-    fun addTask(goalId: Long, title: String, scheduledDate: Long?) {
+    fun addTask(
+        goalId: Long,
+        title: String,
+        scheduledDate: Long?,
+        startTimeMinutes: Int? = null,
+        endTimeMinutes: Int? = null,
+        estimatedDurationMinutes: Int? = null
+    ) {
         if (title.isBlank()) return
 
         viewModelScope.launch {
@@ -229,20 +236,33 @@ class JourneyViewModel(
                 Task(
                     goalId = goalId,
                     title = title,
-                    scheduledDate = scheduledDate
+                    scheduledDate = scheduledDate,
+                    startTimeMinutes = startTimeMinutes,
+                    endTimeMinutes = endTimeMinutes,
+                    estimatedDurationMinutes = estimatedDurationMinutes
                 )
             )
         }
     }
 
-    fun updateTask(task: Task, newTitle: String, scheduledDate: Long?) {
+    fun updateTask(
+        task: Task,
+        newTitle: String,
+        scheduledDate: Long?,
+        startTimeMinutes: Int? = null,
+        endTimeMinutes: Int? = null,
+        estimatedDurationMinutes: Int? = null
+    ) {
         if (newTitle.isBlank()) return
 
         viewModelScope.launch {
             taskRepository.updateTask(
                 task.copy(
                     title = newTitle,
-                    scheduledDate = scheduledDate
+                    scheduledDate = scheduledDate,
+                    startTimeMinutes = startTimeMinutes,
+                    endTimeMinutes = endTimeMinutes,
+                    estimatedDurationMinutes = estimatedDurationMinutes
                 )
             )
         }

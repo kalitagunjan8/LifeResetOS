@@ -25,6 +25,22 @@ Architecture
 - Defined Focus integration.
 - Established the foundations for Daily Review and Smart Planning.
 
+## v0.8.6
+
+Task Scheduling
+
+- Added optional scheduling support for Tasks.
+- Added Start Time.
+- Added End Time.
+- Added Estimated Duration.
+- Updated Task create/edit dialogs.
+- Displayed scheduling information across Journey, Goal Detail and Today's Actions.
+- Extended Backup & Restore to preserve Task scheduling data.
+
+Infrastructure
+
+- Database schema updated to version 8.
+
 ## v0.8.5
 
 Journey Workspace

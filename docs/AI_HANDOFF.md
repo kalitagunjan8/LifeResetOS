@@ -559,17 +559,15 @@ v1.0    Play Store Release
 
 1.
 
-Task Execution Model (v0.8.6)
+Task Lifecycle & Focus Integration (v0.8.7)
 
 Goal:
 
-Implement ADR-015 — Task Execution Model.
+Continue implementing ADR-015.
 
 Priority
 
-✓ ADR-015 approved
-
-☐ Task scheduling
+✓ Task scheduling
 
 ☐ Task lifecycle
 

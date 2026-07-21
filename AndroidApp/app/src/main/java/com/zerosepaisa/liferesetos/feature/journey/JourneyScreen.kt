@@ -51,6 +51,7 @@ import com.zerosepaisa.liferesetos.feature.common.EditTaskDialog
 import com.zerosepaisa.liferesetos.feature.common.TaskDatePickerField
 import com.zerosepaisa.liferesetos.feature.common.TaskRowItem
 import java.util.Locale
+import com.zerosepaisa.liferesetos.feature.common.TaskTimePickerField
 
 @Composable
 fun JourneyScreen(
@@ -219,8 +220,8 @@ fun JourneyScreen(
         AddTaskWithGoalDialog(
             goals = goals,
             onDismiss = { showAddTaskDialog = false },
-            onConfirm = { goalId, title, scheduledDate ->
-                viewModel.addTask(goalId, title, scheduledDate)
+            onConfirm = { goalId, title, scheduledDate, startTime, endTime, estimatedDuration ->
+                viewModel.addTask(goalId, title, scheduledDate, startTime, endTime, estimatedDuration)
                 showAddTaskDialog = false
             }
         )
@@ -230,8 +231,8 @@ fun JourneyScreen(
         EditTaskDialog(
             task = task,
             onDismiss = { editingTask = null },
-            onUpdate = { newTitle, scheduledDate ->
-                viewModel.updateTask(task, newTitle, scheduledDate)
+            onUpdate = { newTitle, scheduledDate, startTime, endTime, estimatedDuration ->
+                viewModel.updateTask(task, newTitle, scheduledDate, startTime, endTime, estimatedDuration)
                 editingTask = null
             },
             onDeleteRequest = {
@@ -396,12 +397,15 @@ private fun JourneyTaskRow(
 private fun AddTaskWithGoalDialog(
     goals: List<Goal>,
     onDismiss: () -> Unit,
-    onConfirm: (Long, String, Long?) -> Unit
+    onConfirm: (Long, String, Long?, Int?, Int?, Int?) -> Unit
 ) {
     var selectedGoal by remember { mutableStateOf(goals.first()) }
     var title by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
     var scheduledDate by remember { mutableStateOf<Long?>(null) }
+    var startTimeMinutes by remember { mutableStateOf<Int?>(null) }
+    var endTimeMinutes by remember { mutableStateOf<Int?>(null) }
+    var estimatedDurationText by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
     AlertDialog(
@@ -460,6 +464,25 @@ private fun AddTaskWithGoalDialog(
                     selectedDateMillis = scheduledDate,
                     onDateSelected = { scheduledDate = it }
                 )
+
+                TaskTimePickerField(
+                    label = "Start time",
+                    selectedMinutes = startTimeMinutes,
+                    onTimeSelected = { startTimeMinutes = it }
+                )
+
+                TaskTimePickerField(
+                    label = "End time",
+                    selectedMinutes = endTimeMinutes,
+                    onTimeSelected = { endTimeMinutes = it }
+                )
+
+                OutlinedTextField(
+                    value = estimatedDurationText,
+                    onValueChange = { estimatedDurationText = it },
+                    label = { Text("Estimated duration (min, optional)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         },
         confirmButton = {
@@ -468,7 +491,14 @@ private fun AddTaskWithGoalDialog(
                     if (title.isBlank()) {
                         showError = true
                     } else {
-                        onConfirm(selectedGoal.id, title.trim(), scheduledDate)
+                        onConfirm(
+                            selectedGoal.id,
+                            title.trim(),
+                            scheduledDate,
+                            startTimeMinutes,
+                            endTimeMinutes,
+                            estimatedDurationText.toIntOrNull()
+                        )
                     }
                 }
             ) {

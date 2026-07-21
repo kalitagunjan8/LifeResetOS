@@ -29,7 +29,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         Habit::class,
         HabitCompletion::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

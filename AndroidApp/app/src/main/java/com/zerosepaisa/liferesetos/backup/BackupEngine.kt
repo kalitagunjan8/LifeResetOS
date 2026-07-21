@@ -67,7 +67,10 @@ class BackupEngine(
                 isCompleted = it.isCompleted,
                 createdAt = it.createdAt,
                 completedAt = it.completedAt,
-                scheduledDate = it.scheduledDate
+                scheduledDate = it.scheduledDate,
+                startTimeMinutes = it.startTimeMinutes,
+                endTimeMinutes = it.endTimeMinutes,
+                estimatedDurationMinutes = it.estimatedDurationMinutes
             )
         }
 
@@ -154,7 +157,10 @@ class BackupEngine(
                     isCompleted = it.isCompleted,
                     createdAt = it.createdAt,
                     completedAt = it.completedAt,
-                    scheduledDate = it.scheduledDate
+                    scheduledDate = it.scheduledDate,
+                    startTimeMinutes = it.startTimeMinutes,
+                    endTimeMinutes = it.endTimeMinutes,
+                    estimatedDurationMinutes = it.estimatedDurationMinutes
                 )
             }
         )

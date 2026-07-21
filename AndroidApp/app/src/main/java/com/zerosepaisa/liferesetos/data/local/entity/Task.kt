@@ -59,5 +59,11 @@ data class Task(
      * This is a planning date, not a hard deadline — hence "scheduled"
      * rather than "due".
      */
-    val scheduledDate: Long? = null
+    val scheduledDate: Long? = null,
+
+    val startTimeMinutes: Int? = null,
+
+    val endTimeMinutes: Int? = null,
+
+    val estimatedDurationMinutes: Int? = null
 )

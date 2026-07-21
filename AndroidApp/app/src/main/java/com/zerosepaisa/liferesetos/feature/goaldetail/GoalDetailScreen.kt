@@ -185,8 +185,8 @@ fun GoalDetailScreen(
     if (showAddTaskDialog) {
         AddTaskDialog(
             onDismiss = { showAddTaskDialog = false },
-            onConfirm = { title, scheduledDate ->
-                viewModel.addTask(goalId, title, scheduledDate)
+            onConfirm = { title, scheduledDate, startTime, endTime, estimatedDuration ->
+                viewModel.addTask(goalId, title, scheduledDate, startTime, endTime, estimatedDuration)
                 showAddTaskDialog = false
             }
         )
@@ -196,8 +196,8 @@ fun GoalDetailScreen(
         EditTaskDialog(
             task = task,
             onDismiss = { editingTask = null },
-            onUpdate = { newTitle, scheduledDate ->
-                viewModel.updateTask(task, newTitle, scheduledDate)
+            onUpdate = { newTitle, scheduledDate, startTime, endTime, estimatedDuration ->
+                viewModel.updateTask(task, newTitle, scheduledDate, startTime, endTime, estimatedDuration)
                 editingTask = null
             },
             onDeleteRequest = {

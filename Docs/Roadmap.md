@@ -63,18 +63,32 @@ Habit Reminders
 ## ✅ v0.8.5
 Journey Workspace
 
-## 🔄 v0.8.6
+## ✅ v0.8.6
 
-Task Execution Model
+Task Scheduling
 
-Based on ADR-015
+## 🔄 v0.8.7
 
-- Task scheduling
+Task Lifecycle & Focus Integration
+
 - Task lifecycle
-- Focus integration
-- State-aware notifications
-- Daily Review foundation
-- Smart Planning foundation
+- Focus auto-start integration
+- Task state management
+
+## v0.8.8
+
+State-aware Notifications
+
+- Start reminder
+- Running reminder
+- End-of-window reminder
+
+## v0.8.9
+
+Execution Foundation
+
+- Daily Review data
+- Smart Planning data
 
 
 ## v0.9

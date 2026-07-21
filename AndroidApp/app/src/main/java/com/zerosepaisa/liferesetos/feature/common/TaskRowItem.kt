@@ -59,6 +59,28 @@ fun TaskRowItem(
                     style = MaterialTheme.typography.labelMedium
                 )
             }
+
+            val timeRangeText = when {
+                task.startTimeMinutes != null && task.endTimeMinutes != null ->
+                    "${formatMinutesOfDay(task.startTimeMinutes)} – ${formatMinutesOfDay(task.endTimeMinutes)}"
+                task.startTimeMinutes != null ->
+                    formatMinutesOfDay(task.startTimeMinutes)
+                else -> null
+            }
+
+            timeRangeText?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+
+            task.estimatedDurationMinutes?.let { minutes ->
+                Text(
+                    text = "Est. $minutes min",
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
         }
     }
 }
