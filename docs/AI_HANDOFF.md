@@ -559,29 +559,33 @@ v1.0    Play Store Release
 
 1.
 
-Habit Analytics (v0.8.5)
+Task Execution Model (v0.8.6)
 
 Goal:
 
-Integrate Habits into ProgressEngine and expose meaningful analytics.
+Implement ADR-015 — Task Execution Model.
 
 Priority
 
-☐ Habit completion rate
+✓ ADR-015 approved
 
-☐ Weekly & monthly completion
+☐ Task scheduling
 
-☐ Best-performing habits
+☐ Task lifecycle
 
-☐ Progress screen integration
+☐ Focus integration
+
+☐ State-aware notifications
+
+☐ Daily Review foundation
+
+☐ Smart Planning foundation
 
 2.
 
 Future Improvements
 
-☐ Journey UX consolidation
-    - Move Task management under Journey alongside Goals and Habits before v1.0
-    - Keep Home focused on execution (Today's Actions, Focus, Progress)
+☐ Nest Tasks under their respective Goals inside Journey Workspace
 
 ☐ Backup validation improvements
 
@@ -594,6 +598,8 @@ Pre-Release Requirements (Must Complete Before v1.0)
 ☐ Verify upgrade path across every schema version.
 
 ☐ Remove temporary Room diagnostic logging.
+
+☐ Performance Pass.
 
 ☐ UI/UX Polish Pass.
 

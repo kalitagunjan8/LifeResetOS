@@ -11,12 +11,36 @@
 
 All notable changes to Life Reset OS will be documented here.
 
-### Fixed
+## ADR-015
 
-- Resolved a critical Room database initialization issue where AppContainer created a second AppDatabase instance.
-- Eliminated the possibility of unintended destructive migrations caused by multiple Room instances accessing the same database.
-- AppContainer now reuses the shared AppDatabase singleton.
-- Added temporary database diagnostic logging to monitor future schema migrations.
+Task Execution Model
+
+Architecture
+
+- Defined the execution model for Tasks.
+- Established the separation between planning and execution.
+- Defined Task lifecycle.
+- Defined scheduling philosophy.
+- Defined notification philosophy.
+- Defined Focus integration.
+- Established the foundations for Daily Review and Smart Planning.
+
+## v0.8.5
+
+Journey Workspace
+
+- Journey is now the central planning workspace.
+- Added dedicated Tasks section.
+- Added full Task CRUD from Journey.
+- Reused shared Task dialogs across Journey and Goal Detail.
+- Home execution flow remains unchanged.
+
+Fixed
+
+- Resolved duplicate LazyColumn key collisions by namespacing keys.
+- Refactored Task dialogs into shared reusable components.
+
+
 
 ## v0.8.4
 
@@ -33,6 +57,13 @@ Habit Reminders
 Infrastructure
 
 - Database schema updated to v7
+
+### Fixed
+
+- Resolved a critical Room database initialization issue where AppContainer created a second AppDatabase instance.
+- Eliminated the possibility of unintended destructive migrations caused by multiple Room instances accessing the same database.
+- AppContainer now reuses the shared AppDatabase singleton.
+- Added temporary database diagnostic logging to monitor future schema migrations.
 
 ## v0.8.3
 

@@ -12,15 +12,22 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,14 +40,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zerosepaisa.liferesetos.data.local.entity.Goal
 import com.zerosepaisa.liferesetos.data.local.entity.Habit
+import com.zerosepaisa.liferesetos.data.local.entity.Task
 import androidx.compose.material3.Checkbox
 import androidx.compose.ui.text.style.TextDecoration
 import com.zerosepaisa.liferesetos.streaks.HabitStreak
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
+import com.zerosepaisa.liferesetos.feature.common.EditTaskDialog
+import com.zerosepaisa.liferesetos.feature.common.TaskDatePickerField
+import com.zerosepaisa.liferesetos.feature.common.TaskRowItem
 import java.util.Locale
 
 @Composable
@@ -52,9 +61,14 @@ fun JourneyScreen(
     val viewModel: JourneyViewModel = viewModel()
     val mission by viewModel.activeMission.collectAsState()
     val goals by viewModel.activeGoals.collectAsState()
+    val taskItems by viewModel.taskItems.collectAsState()
     val habits by viewModel.habits.collectAsState()
     val todaysCompletedHabitIds by viewModel.todaysCompletedHabitIds.collectAsState()
     val habitStreaks by viewModel.habitStreaks.collectAsState()
+
+    var showAddTaskDialog by remember { mutableStateOf(false) }
+    var editingTask by remember { mutableStateOf<Task?>(null) }
+    var deleteConfirmTask by remember { mutableStateOf<Task?>(null) }
 
     var showAddHabitDialog by remember { mutableStateOf(false) }
     var editingHabit by remember { mutableStateOf<Habit?>(null) }
@@ -110,7 +124,7 @@ fun JourneyScreen(
                     )
                 }
             } else {
-                items(goals) { goal ->
+                items(goals, key = { "goal_${it.id}" }) { goal ->
                     GoalCard(
                         goal = goal,
                         onClick = { onGoalClick(goal.id) }
@@ -143,7 +157,7 @@ fun JourneyScreen(
                     )
                 }
             } else {
-                items(habits, key = { it.id }) { habit ->
+                items(habits, key = { "habit_${it.id}" }) { habit ->
                     HabitCard(
                         habit = habit,
                         isCompletedToday = todaysCompletedHabitIds.contains(habit.id),
@@ -153,8 +167,107 @@ fun JourneyScreen(
                     )
                 }
             }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "✅ Tasks",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    if (goals.isNotEmpty()) {
+                        IconButton(onClick = { showAddTaskDialog = true }) {
+                            Icon(Icons.Filled.Add, contentDescription = "Add Task")
+                        }
+                    }
+                }
+            }
+
+            if (goals.isEmpty()) {
+                item {
+                    Text(
+                        text = "Add a Goal first to create Tasks.",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            } else if (taskItems.isEmpty()) {
+                item {
+                    Text(
+                        text = "No tasks yet. Tap + to add one.",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            } else {
+                items(taskItems, key = { "task_${it.task.id}" }) { item ->
+                    JourneyTaskRow(
+                        item = item,
+                        onToggle = { viewModel.toggleTaskComplete(item.task) },
+                        onClick = { editingTask = item.task }
+                    )
+                }
+            }
         }
     }
+
+    // ---- Task dialogs ----
+
+    if (showAddTaskDialog) {
+        AddTaskWithGoalDialog(
+            goals = goals,
+            onDismiss = { showAddTaskDialog = false },
+            onConfirm = { goalId, title, scheduledDate ->
+                viewModel.addTask(goalId, title, scheduledDate)
+                showAddTaskDialog = false
+            }
+        )
+    }
+
+    editingTask?.let { task ->
+        EditTaskDialog(
+            task = task,
+            onDismiss = { editingTask = null },
+            onUpdate = { newTitle, scheduledDate ->
+                viewModel.updateTask(task, newTitle, scheduledDate)
+                editingTask = null
+            },
+            onDeleteRequest = {
+                deleteConfirmTask = task
+                editingTask = null
+            }
+        )
+    }
+
+    deleteConfirmTask?.let { task ->
+        AlertDialog(
+            onDismissRequest = { deleteConfirmTask = null },
+            title = { Text("Delete this Task?") },
+            text = { Text("This can't be undone.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteTask(task)
+                        deleteConfirmTask = null
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { deleteConfirmTask = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    // ---- Habit dialogs ----
 
     if (showAddHabitDialog) {
         AddHabitDialog(
@@ -239,6 +352,135 @@ private fun GoalCard(
             )
         }
     }
+}
+
+/**
+ * Task row for the Journey Workspace's flat Tasks section. Shows which
+ * Goal the Task belongs to (since Tasks are no longer nested under their
+ * Goal card here), reusing the shared TaskRowItem for the title/checkbox/
+ * scheduledDate presentation.
+ */
+@Composable
+private fun JourneyTaskRow(
+    item: JourneyTaskItem,
+    onToggle: () -> Unit,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(2.dp)
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+            Text(
+                text = item.goalTitle,
+                style = MaterialTheme.typography.labelSmall
+            )
+            TaskRowItem(
+                task = item.task,
+                onToggle = onToggle,
+                onClick = onClick
+            )
+        }
+    }
+}
+
+/**
+ * Add Task dialog for the Journey Tasks section. Unlike GoalDetail (where
+ * the Goal is already known from context, ADR-010), Journey's flat Tasks
+ * section requires picking which Goal a new Task belongs to (Task.goalId
+ * is required — ADR-004). Title/date fields reuse TaskDatePickerField.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AddTaskWithGoalDialog(
+    goals: List<Goal>,
+    onDismiss: () -> Unit,
+    onConfirm: (Long, String, Long?) -> Unit
+) {
+    var selectedGoal by remember { mutableStateOf(goals.first()) }
+    var title by remember { mutableStateOf("") }
+    var showError by remember { mutableStateOf(false) }
+    var scheduledDate by remember { mutableStateOf<Long?>(null) }
+    var expanded by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Add Task") },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it }
+                ) {
+                    OutlinedTextField(
+                        value = selectedGoal.title,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Goal") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                    )
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        goals.forEach { goal ->
+                            DropdownMenuItem(
+                                text = { Text(goal.title) },
+                                onClick = {
+                                    selectedGoal = goal
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = {
+                        title = it
+                        if (it.isNotBlank()) showError = false
+                    },
+                    label = { Text("Title") },
+                    isError = showError,
+                    supportingText = {
+                        if (showError) Text("Title is required")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                TaskDatePickerField(
+                    selectedDateMillis = scheduledDate,
+                    onDateSelected = { scheduledDate = it }
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (title.isBlank()) {
+                        showError = true
+                    } else {
+                        onConfirm(selectedGoal.id, title.trim(), scheduledDate)
+                    }
+                }
+            ) {
+                Text("Add")
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }
 
 @Composable

@@ -44,13 +44,16 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.zerosepaisa.liferesetos.feature.common.AddTaskDialog
+import com.zerosepaisa.liferesetos.feature.common.EditTaskDialog
 
 @Composable
 fun GoalDetailScreen(
     modifier: Modifier = Modifier,
     goalId: Long,
     onEditClick: (Long) -> Unit = {}
-) {
+)
+{
     val viewModel: GoalDetailViewModel = viewModel()
     val tasks by viewModel.tasks.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -228,201 +231,5 @@ fun GoalDetailScreen(
                 }
             }
         )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AddTaskDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (String, Long?) -> Unit
-) {
-    var title by remember { mutableStateOf("") }
-    var showError by remember { mutableStateOf(false) }
-    var scheduledDate by remember { mutableStateOf<Long?>(null) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Add Task") },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = {
-                        title = it
-                        if (it.isNotBlank()) showError = false
-                    },
-                    label = { Text("Title") },
-                    isError = showError,
-                    supportingText = {
-                        if (showError) Text("Title is required")
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                TaskDatePickerField(
-                    selectedDateMillis = scheduledDate,
-                    onDateSelected = { scheduledDate = it }
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    if (title.isBlank()) {
-                        showError = true
-                    } else {
-                        onConfirm(title.trim(), scheduledDate)
-                    }
-                }
-            ) {
-                Text("Add")
-            }
-        },
-        dismissButton = {
-            OutlinedButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun EditTaskDialog(
-    task: Task,
-    onDismiss: () -> Unit,
-    onUpdate: (String, Long?) -> Unit,
-    onDeleteRequest: () -> Unit
-) {
-    var title by remember { mutableStateOf(task.title) }
-    var showError by remember { mutableStateOf(false) }
-    var scheduledDate by remember { mutableStateOf(task.scheduledDate) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Edit Task") },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = {
-                        title = it
-                        if (it.isNotBlank()) showError = false
-                    },
-                    label = { Text("Title") },
-                    isError = showError,
-                    supportingText = {
-                        if (showError) Text("Title is required")
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                TaskDatePickerField(
-                    selectedDateMillis = scheduledDate,
-                    onDateSelected = { scheduledDate = it }
-                )
-
-                OutlinedButton(
-                    onClick = onDeleteRequest,
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Delete Task")
-                }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    if (title.isBlank()) {
-                        showError = true
-                    } else {
-                        onUpdate(title.trim(), scheduledDate)
-                    }
-                }
-            ) {
-                Text("Update")
-            }
-        },
-        dismissButton = {
-            OutlinedButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
-}
-
-/**
- * Shared date-picker field used by both Add and Edit Task dialogs.
- * Shows the currently selected scheduledDate (or "No date set") and opens
- * a Material3 DatePickerDialog to change it. A Clear action allows
- * un-scheduling the Task.
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TaskDatePickerField(
-    selectedDateMillis: Long?,
-    onDateSelected: (Long?) -> Unit
-) {
-    var showPicker by remember { mutableStateOf(false) }
-    val dateFormat = remember { SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault()) }
-
-    Column {
-        Text(
-            text = "Scheduled for",
-            style = MaterialTheme.typography.labelMedium
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlinedButton(onClick = { showPicker = true }) {
-                Text(
-                    text = selectedDateMillis?.let { dateFormat.format(Date(it)) }
-                        ?: "No date set"
-                )
-            }
-
-            if (selectedDateMillis != null) {
-                OutlinedButton(onClick = { onDateSelected(null) }) {
-                    Text("Clear")
-                }
-            }
-        }
-    }
-
-    if (showPicker) {
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = selectedDateMillis
-        )
-
-        DatePickerDialog(
-            onDismissRequest = { showPicker = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDateSelected(datePickerState.selectedDateMillis)
-                        showPicker = false
-                    }
-                ) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showPicker = false }) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            DatePicker(state = datePickerState)
-        }
     }
 }

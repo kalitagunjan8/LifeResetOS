@@ -60,13 +60,22 @@ Habit Reminders
 - WorkManager scheduling
 - Notification integration
 
-## 🔄 v0.8.5
-Habit Analytics
+## ✅ v0.8.5
+Journey Workspace
 
-- Habit completion rate
-- Weekly/monthly completion
-- ProgressEngine integration
-- Progress screen updates
+## 🔄 v0.8.6
+
+Task Execution Model
+
+Based on ADR-015
+
+- Task scheduling
+- Task lifecycle
+- Focus integration
+- State-aware notifications
+- Daily Review foundation
+- Smart Planning foundation
+
 
 ## v0.9
 

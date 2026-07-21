@@ -461,6 +461,307 @@ Status
 
 Accepted
 
+# ADR-015 — Task Execution Model
+
+See ADR-015.
+
+## Status
+
+Accepted
+
+---
+
+## Context
+
+Life Reset OS has evolved from a simple productivity tracker into a planning and execution operating system.
+
+Journey is responsible for planning.
+
+Home is responsible for execution.
+
+Tasks now sit between long-term Goals and real Focus Sessions, requiring a clear execution model that supports scheduling, notifications, Focus integration, Daily Review, Smart Planning, and future analytics.
+
+Without a dedicated execution model, future features would repeatedly redefine Task behavior and increase architectural complexity.
+
+---
+
+## Decision
+
+Tasks represent planned work.
+
+Focus Sessions represent execution.
+
+A Task is never responsible for tracking work duration itself.
+
+Execution is always delegated to Focus.
+
+Task scheduling exists only to help users execute work at the intended time.
+
+---
+
+# Planning Hierarchy
+
+Mission
+
+↓
+
+Goals
+
+↓
+
+Tasks
+
+↓
+
+Focus Sessions
+
+---
+
+# Journey Responsibilities
+
+Journey is the planning workspace.
+
+Users manage:
+
+- Goals
+- Tasks
+- Habits
+
+Journey never starts work.
+
+Journey prepares work.
+
+---
+
+# Home Responsibilities
+
+Home is the execution dashboard.
+
+Home displays:
+
+- Today's Tasks
+- Today's Habits
+- Active Focus Session
+- Today's Progress
+
+Home never edits long-term planning.
+
+---
+
+# Task Lifecycle
+
+Every Task exists in one of the following states:
+
+Planned
+
+↓
+
+In Progress
+
+↓
+
+Completed
+
+or
+
+Skipped
+
+or
+
+Rescheduled
+
+Definitions:
+
+Planned
+Task exists but has not been started.
+
+In Progress
+User has started work through a Focus Session.
+
+Completed
+Task finished.
+
+Skipped
+User intentionally skipped today's execution.
+
+Rescheduled
+Execution moved to another planned time.
+
+No additional lifecycle states should be introduced without a new ADR.
+
+---
+
+# Scheduling Philosophy
+
+Task scheduling is optional.
+
+Supported fields:
+
+- Scheduled Date
+- Start Time (optional)
+- End Time (optional)
+- Estimated Duration (optional)
+
+Tasks are not recurring.
+
+Recurring work belongs to Habits.
+
+---
+
+# Notification Philosophy
+
+Notifications exist to initiate execution.
+
+Notifications should never exist solely as reminders.
+
+Every notification should encourage an action.
+
+Examples:
+
+"Android Development starts in 15 minutes."
+
+Action:
+
+▶ Start Focus
+
+If execution has not started after the scheduled beginning:
+
+Actions:
+
+▶ Start Focus
+
+Reschedule
+
+Skip
+
+Near the end of the scheduled execution window:
+
+Actions:
+
+Start Anyway
+
+Reschedule
+
+Skip
+
+Notifications must never guilt the user for starting late.
+
+Late execution remains valid execution.
+
+---
+
+# Focus Integration
+
+Focus Sessions execute Tasks.
+
+Starting Focus automatically:
+
+- opens the Focus screen
+- marks the Task as In Progress
+- associates the Focus Session with the Task
+
+Finishing Focus does not automatically complete the Task.
+
+Users decide whether the Task is:
+
+- Completed
+
+or
+
+- Continue Later
+
+---
+
+# Daily Review Inputs
+
+Daily Review derives information from Task lifecycle events.
+
+Examples:
+
+- Tasks Planned
+- Tasks Started
+- Tasks Completed
+- Tasks Skipped
+- Tasks Rescheduled
+- Total Focus Time
+- Habit Completion
+
+Daily Review presents facts only.
+
+It must never shame users for missed schedules.
+
+---
+
+# Smart Planning Inputs
+
+Smart Planning may use:
+
+- Scheduled Date
+- Start Time
+- End Time
+- Estimated Duration
+- Task Status
+- Habit schedule
+
+to generate daily recommendations.
+
+Smart Planning never modifies user data automatically.
+
+Recommendations require user confirmation.
+
+---
+
+# Design Principles
+
+Tasks answer:
+
+"What needs to be done?"
+
+Focus answers:
+
+"How is the work performed?"
+
+Journey answers:
+
+"What should I plan?"
+
+Home answers:
+
+"What should I execute now?"
+
+---
+
+## Consequences
+
+Positive
+
+- Clear separation between planning and execution.
+- Supports Daily Review without redesign.
+- Supports Smart Planning.
+- Supports future analytics.
+- Keeps Focus as the single execution engine.
+- Prevents duplicate execution logic.
+
+Negative
+
+- Requires additional scheduling fields on Tasks.
+- Introduces more Task state management.
+- Future notification logic becomes state-aware rather than purely time-based.
+
+---
+
+## Future Work
+
+Future milestones may implement:
+
+- Task scheduling
+- State-aware notifications
+- Focus auto-launch
+- Daily Review
+- Smart Planning
+
+without altering this architectural model.
+
 
 ---
 

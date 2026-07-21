@@ -23,6 +23,14 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import com.zerosepaisa.liferesetos.notifications.HabitReminderScheduler
+import com.zerosepaisa.liferesetos.data.local.entity.Task
+import com.zerosepaisa.liferesetos.data.repository.TaskRepository
+
+data class JourneyTaskItem(
+    val task: Task,
+    val goalId: Long,
+    val goalTitle: String
+)
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -54,6 +62,12 @@ class JourneyViewModel(
     private val _activeGoals = MutableStateFlow<List<Goal>>(emptyList())
     val activeGoals: StateFlow<List<Goal>> = _activeGoals.asStateFlow()
 
+    private val _tasksByGoal = MutableStateFlow<Map<Long, List<Task>>>(emptyMap())
+    val tasksByGoal: StateFlow<Map<Long, List<Task>>> = _tasksByGoal.asStateFlow()
+
+    private val _taskItems = MutableStateFlow<List<JourneyTaskItem>>(emptyList())
+    val taskItems: StateFlow<List<JourneyTaskItem>> = _taskItems.asStateFlow()
+
     private val _habits = MutableStateFlow<List<Habit>>(emptyList())
     val habits: StateFlow<List<Habit>> = _habits.asStateFlow()
 
@@ -64,6 +78,10 @@ class JourneyViewModel(
     val habitStreaks: StateFlow<Map<Long, HabitStreak>> = _habitStreaks.asStateFlow()
 
     private val habitReminderScheduler = HabitReminderScheduler(application)
+
+    private val taskRepository = TaskRepository(
+        AppDatabase.getInstance(application).taskDao()
+    )
 
     init {
         viewModelScope.launch {
@@ -107,6 +125,28 @@ class JourneyViewModel(
                 }
                 .collect {
                     _habitStreaks.value = it
+                }
+        }
+
+        viewModelScope.launch {
+            goalRepository.getActiveGoals()
+                .flatMapLatest { goals ->
+                    if (goals.isEmpty()) {
+                        flowOf(goals to emptyMap<Long, List<Task>>())
+                    } else {
+                        val perGoalFlows = goals.map { goal ->
+                            taskRepository.getTasksForGoal(goal.id).map { tasks -> goal.id to tasks }
+                        }
+                        combine(perGoalFlows) { pairs -> goals to pairs.toMap() }
+                    }
+                }
+                .collect { (goals, map) ->
+                    _tasksByGoal.value = map
+                    _taskItems.value = goals.flatMap { goal ->
+                        map[goal.id].orEmpty().map { task ->
+                            JourneyTaskItem(task = task, goalId = goal.id, goalTitle = goal.title)
+                        }
+                    }
                 }
         }
     }
@@ -178,6 +218,50 @@ class JourneyViewModel(
     fun toggleHabitCompletion(habit: Habit) {
         viewModelScope.launch {
             habitCompletionRepository.toggleTodaysCompletion(habit.id)
+        }
+    }
+
+    fun addTask(goalId: Long, title: String, scheduledDate: Long?) {
+        if (title.isBlank()) return
+
+        viewModelScope.launch {
+            taskRepository.saveTask(
+                Task(
+                    goalId = goalId,
+                    title = title,
+                    scheduledDate = scheduledDate
+                )
+            )
+        }
+    }
+
+    fun updateTask(task: Task, newTitle: String, scheduledDate: Long?) {
+        if (newTitle.isBlank()) return
+
+        viewModelScope.launch {
+            taskRepository.updateTask(
+                task.copy(
+                    title = newTitle,
+                    scheduledDate = scheduledDate
+                )
+            )
+        }
+    }
+
+    fun toggleTaskComplete(task: Task) {
+        viewModelScope.launch {
+            taskRepository.updateTask(
+                task.copy(
+                    isCompleted = !task.isCompleted,
+                    completedAt = if (!task.isCompleted) System.currentTimeMillis() else null
+                )
+            )
+        }
+    }
+
+    fun deleteTask(task: Task) {
+        viewModelScope.launch {
+            taskRepository.deleteTask(task)
         }
     }
 }
