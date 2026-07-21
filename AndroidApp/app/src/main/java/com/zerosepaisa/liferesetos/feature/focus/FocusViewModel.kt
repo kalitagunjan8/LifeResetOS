@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
 
 enum class FocusStage {
     SELECT_TASK,
@@ -80,6 +81,12 @@ class FocusViewModel(
         _remainingSeconds.value = totalSeconds
         _stage.value = FocusStage.RUNNING
 
+        _selectedTask.value?.let { task ->
+            viewModelScope.launch {
+                taskRepository.updateTask(task.copy(status = TaskStatus.IN_PROGRESS))
+            }
+        }
+
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
             while (_remainingSeconds.value > 0) {
@@ -140,6 +147,27 @@ class FocusViewModel(
         _totalSeconds.value = 0
         _remainingSeconds.value = 0
         _stage.value = FocusStage.SELECT_TASK
+    }
+
+
+    fun completeTask() {
+        _selectedTask.value?.let { task ->
+            viewModelScope.launch {
+                taskRepository.updateTask(
+                    task.copy(
+                        isCompleted = true,
+                        completedAt = System.currentTimeMillis(),
+                        status = TaskStatus.COMPLETED
+                    )
+                )
+            }
+        }
+        startOver()
+    }
+
+
+    fun continueLater() {
+        startOver()
     }
 
     override fun onCleared() {

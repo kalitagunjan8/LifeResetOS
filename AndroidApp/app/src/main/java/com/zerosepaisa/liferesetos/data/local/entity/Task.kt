@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
 
 @Entity(
     tableName = "tasks",
@@ -65,5 +66,7 @@ data class Task(
 
     val endTimeMinutes: Int? = null,
 
-    val estimatedDurationMinutes: Int? = null
+    val estimatedDurationMinutes: Int? = null,
+
+    val status: TaskStatus = TaskStatus.PLANNED
 )

@@ -559,7 +559,7 @@ v1.0    Play Store Release
 
 1.
 
-Task Lifecycle & Focus Integration (v0.8.7)
+State-aware Notifications (v0.8.8)
 
 Goal:
 
@@ -569,39 +569,15 @@ Priority
 
 ✓ Task scheduling
 
-☐ Task lifecycle
+✓ Task lifecycle
 
-☐ Focus integration
+✓ Focus integration
 
 ☐ State-aware notifications
 
 ☐ Daily Review foundation
 
 ☐ Smart Planning foundation
-
-2.
-
-Future Improvements
-
-☐ Nest Tasks under their respective Goals inside Journey Workspace
-
-☐ Backup validation improvements
-
-3.
-
-Pre-Release Requirements (Must Complete Before v1.0)
-
-☐ Replace fallbackToDestructiveMigration() with proper Room Migration objects.
-
-☐ Verify upgrade path across every schema version.
-
-☐ Remove temporary Room diagnostic logging.
-
-☐ Performance Pass.
-
-☐ UI/UX Polish Pass.
-
-☐ Play Store release preparation.
 
 # Next Milestone
 

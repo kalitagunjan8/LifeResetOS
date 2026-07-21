@@ -77,7 +77,8 @@ fun FocusScreen(
                 ResultStage(
                     modifier = modifier,
                     session = session,
-                    onDone = { viewModel.startOver() }
+                    onCompleteTask = { viewModel.completeTask() },
+                    onContinueLater = { viewModel.continueLater() }
                 )
             }
         }
@@ -141,11 +142,18 @@ private fun SelectTaskStage(
                     shape = RoundedCornerShape(16.dp),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Text(
-                        text = task.title,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(16.dp)
-                    )
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = task.title,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        if (task.status == com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus.IN_PROGRESS) {
+                            Text(
+                                text = "In Progress",
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -273,7 +281,8 @@ private fun RunningStage(
 private fun ResultStage(
     modifier: Modifier,
     session: FocusSession,
-    onDone: () -> Unit
+    onCompleteTask: () -> Unit,
+    onContinueLater: () -> Unit
 ) {
     val resultText = when (session.status) {
         SessionStatus.COMPLETED -> "Completed"
@@ -304,8 +313,17 @@ private fun ResultStage(
                 style = MaterialTheme.typography.titleMedium
             )
 
-            Button(onClick = onDone) {
-                Text("Done")
+            Text(
+                text = "Is this Task done?",
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Button(onClick = onCompleteTask) {
+                Text("Complete Task")
+            }
+
+            OutlinedButton(onClick = onContinueLater) {
+                Text("Continue Later")
             }
         }
     }

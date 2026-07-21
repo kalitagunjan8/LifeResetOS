@@ -25,6 +25,25 @@ Architecture
 - Defined Focus integration.
 - Established the foundations for Daily Review and Smart Planning.
 
+## v0.8.7
+
+Task Lifecycle & Focus Integration
+
+- Added TaskStatus model implementing the ADR-015 lifecycle.
+- Added Task lifecycle:
+  - Planned
+  - In Progress
+  - Completed
+  - Skipped
+  - Rescheduled
+- Connected Tasks with Focus Sessions.
+- Starting Focus now transitions Tasks into In Progress.
+- Finishing Focus now allows:
+  - Complete Task
+  - Continue Later
+- Updated Task persistence, converters and backup format to support Task lifecycle.
+- Verified scheduling and day rollover behavior.
+
 ## v0.8.6
 
 Task Scheduling

@@ -15,13 +15,9 @@ import com.zerosepaisa.liferesetos.data.local.entity.Task
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
 
-/**
- * Shared Task row: checkbox to toggle completion, title, optional tap
- * action (e.g. to open Edit). Used by Goal Detail (with onClick) and
- * Today's Actions (toggle only, no onClick — editing a Task stays owned
- * by Goal Detail per ADR-010).
- */
+
 @Composable
 fun TaskRowItem(
     task: Task,
@@ -78,6 +74,12 @@ fun TaskRowItem(
             task.estimatedDurationMinutes?.let { minutes ->
                 Text(
                     text = "Est. $minutes min",
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+            if (task.status == TaskStatus.IN_PROGRESS) {
+                Text(
+                    text = "In Progress",
                     style = MaterialTheme.typography.labelSmall
                 )
             }

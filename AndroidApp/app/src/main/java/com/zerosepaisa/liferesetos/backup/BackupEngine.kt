@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
 
 class BackupEngine(
     private val missionRepository: MissionRepository,
@@ -70,7 +71,8 @@ class BackupEngine(
                 scheduledDate = it.scheduledDate,
                 startTimeMinutes = it.startTimeMinutes,
                 endTimeMinutes = it.endTimeMinutes,
-                estimatedDurationMinutes = it.estimatedDurationMinutes
+                estimatedDurationMinutes = it.estimatedDurationMinutes,
+                status = it.status.name
             )
         }
 
@@ -100,13 +102,7 @@ class BackupEngine(
     suspend fun exportToJson(appVersion: String): String =
         json.encodeToString(buildBackup(appVersion))
 
-    /**
-     * Full replace restore: wipes all existing data, then inserts the
-     * backup's data with original IDs preserved. Not run in a DB
-     * transaction (BackupEngine depends only on Repositories, never
-     * AppDatabase, per the Domain Service pattern) — accepted MVP
-     * limitation for this single-user local app.
-     */
+
     suspend fun restoreFromJson(jsonContent: String) {
         val backup = json.decodeFromString<BackupData>(jsonContent)
 
@@ -160,7 +156,8 @@ class BackupEngine(
                     scheduledDate = it.scheduledDate,
                     startTimeMinutes = it.startTimeMinutes,
                     endTimeMinutes = it.endTimeMinutes,
-                    estimatedDurationMinutes = it.estimatedDurationMinutes
+                    estimatedDurationMinutes = it.estimatedDurationMinutes,
+                    status = TaskStatus.valueOf(it.status)
                 )
             }
         )

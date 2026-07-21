@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.flowOf
 import com.zerosepaisa.liferesetos.notifications.HabitReminderScheduler
 import com.zerosepaisa.liferesetos.data.local.entity.Task
 import com.zerosepaisa.liferesetos.data.repository.TaskRepository
+import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
 
 data class JourneyTaskItem(
     val task: Task,
@@ -273,7 +274,8 @@ class JourneyViewModel(
             taskRepository.updateTask(
                 task.copy(
                     isCompleted = !task.isCompleted,
-                    completedAt = if (!task.isCompleted) System.currentTimeMillis() else null
+                    completedAt = if (!task.isCompleted) System.currentTimeMillis() else null,
+                    status = if (!task.isCompleted) TaskStatus.COMPLETED else TaskStatus.PLANNED
                 )
             )
         }

@@ -67,7 +67,7 @@ Journey Workspace
 
 Task Scheduling
 
-## 🔄 v0.8.7
+## ✅ v0.8.7
 
 Task Lifecycle & Focus Integration
 
@@ -75,7 +75,7 @@ Task Lifecycle & Focus Integration
 - Focus auto-start integration
 - Task state management
 
-## v0.8.8
+## 🔄 v0.8.8
 
 State-aware Notifications
 

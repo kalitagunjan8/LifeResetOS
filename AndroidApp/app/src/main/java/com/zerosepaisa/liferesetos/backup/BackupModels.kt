@@ -38,7 +38,8 @@ data class BackupTask(
     val scheduledDate: Long? = null,
     val startTimeMinutes: Int? = null,
     val endTimeMinutes: Int? = null,
-    val estimatedDurationMinutes: Int? = null
+    val estimatedDurationMinutes: Int? = null,
+    val status: String = "PLANNED"
 )
 
 @Serializable

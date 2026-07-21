@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
 
 class GoalDetailViewModel(
     application: Application
@@ -80,7 +81,8 @@ class GoalDetailViewModel(
             taskRepository.updateTask(
                 task.copy(
                     isCompleted = !task.isCompleted,
-                    completedAt = if (!task.isCompleted) System.currentTimeMillis() else null
+                    completedAt = if (!task.isCompleted) System.currentTimeMillis() else null,
+                    status = if (!task.isCompleted) TaskStatus.COMPLETED else TaskStatus.PLANNED
                 )
             )
         }

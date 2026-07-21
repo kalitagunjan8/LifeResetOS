@@ -5,6 +5,7 @@ import com.zerosepaisa.liferesetos.data.local.entity.enums.GoalCategory
 import com.zerosepaisa.liferesetos.data.local.entity.enums.GoalPriority
 import com.zerosepaisa.liferesetos.data.local.entity.enums.GoalStatus
 import com.zerosepaisa.liferesetos.data.local.entity.enums.SessionStatus
+import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
 
 class Converters {
 
@@ -43,4 +44,11 @@ class Converters {
     @TypeConverter
     fun toSessionStatus(value: String): SessionStatus =
         SessionStatus.valueOf(value)
+
+    @TypeConverter
+    fun fromTaskStatus(status: TaskStatus): String = status.name
+
+    @TypeConverter
+    fun toTaskStatus(value: String): TaskStatus =
+        TaskStatus.valueOf(value)
 }
