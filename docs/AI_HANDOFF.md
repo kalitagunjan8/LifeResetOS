@@ -557,25 +557,19 @@ v1.0    Play Store Release
 
 # Current Development Priority
 
-1.
+## v0.9 — Pre-Release Hardening
 
-Pre-Release Hardening (v0.9.0)
+### UI / UX Polish
 
-Goal
+✅ Consistent spacing and alignment
 
-Prepare Life Reset OS for its first stable public beta by improving the overall user experience without changing the core architecture.
+✅ Typography review
 
-Priority
+✅ Empty states
 
-☐ Consistent spacing and alignment
+✅ Loading states
 
-☐ Typography review
-
-☐ Empty states
-
-☐ Loading states
-
-☐ Dialog consistency
+✅ Dialog consistency
 
 ☐ Navigation flow review
 
@@ -585,7 +579,47 @@ Priority
 
 ☐ Final icon review
 
-☐ Micro animations (where appropriate)
+☐ Micro animations
+
+---
+
+### Performance Pass
+
+☐ Profile Journey/Progress screens
+
+☐ Reduce redundant Flow recombination
+
+☐ Optimize Room queries
+
+☐ Review recomposition hotspots
+
+☐ Add database indices where beneficial
+
+---
+
+### Room Migration Hardening
+
+☐ Replace fallbackToDestructiveMigration()
+
+☐ Implement Migration objects
+
+☐ Validate all schema upgrades
+
+---
+
+### Release Preparation
+
+☐ Backup validation
+
+☐ Notification reconciliation
+
+☐ Remove diagnostic logging
+
+☐ Final QA
+
+☐ Internal Beta
+
+☐ Play Store preparation
 
 # Next Milestone
 
