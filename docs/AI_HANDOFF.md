@@ -2,7 +2,7 @@
 
 **Project:** Life Reset OS
 **Last Updated:** 2026-07-22
-**Current Version: v0.8.8
+**Current Version: v0.8.9
 
 ---
 
@@ -559,11 +559,11 @@ v1.0    Play Store Release
 
 1.
 
-State-aware Notifications (v0.8.8)
+Execution Foundation (v0.8.9)
 
-Goal:
+Goal
 
-Continue implementing ADR-015.
+Build the execution intelligence defined by ADR-015.
 
 Priority
 
