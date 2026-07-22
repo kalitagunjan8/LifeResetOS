@@ -84,15 +84,15 @@ State-aware Notifications
 - End-of-window reminder (Start Anyway / Reschedule / Skip)
 - Auto-cancel on Task state change (In Progress / Completed / Skipped / Rescheduled)
 
-## 🔄 v0.8.9
+## ✅ v0.8.9
 
 Execution Foundation
 
-- Daily Review data
-- Smart Planning data
+- Daily Review foundation
+- Smart Planning foundation
 
 
-## v0.9
+## 🔄 v0.9
 
 Pre-Release Hardening
 

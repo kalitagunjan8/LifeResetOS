@@ -2,7 +2,7 @@
 
 **Project:** Life Reset OS
 **Last Updated:** 2026-07-22
-**Current Version: v0.8.9
+**Current Version: v0.9.0
 
 ---
 
@@ -559,25 +559,33 @@ v1.0    Play Store Release
 
 1.
 
-Execution Foundation (v0.8.9)
+Pre-Release Hardening (v0.9.0)
 
 Goal
 
-Build the execution intelligence defined by ADR-015.
+Prepare Life Reset OS for its first stable public beta by improving the overall user experience without changing the core architecture.
 
 Priority
 
-✓ Task scheduling
+☐ Consistent spacing and alignment
 
-✓ Task lifecycle
+☐ Typography review
 
-✓ Focus integration
+☐ Empty states
 
-✓ State-aware notifications
+☐ Loading states
 
-☐ Daily Review foundation
+☐ Dialog consistency
 
-☐ Smart Planning foundation
+☐ Navigation flow review
+
+☐ Accessibility improvements
+
+☐ Material 3 polish
+
+☐ Final icon review
+
+☐ Micro animations (where appropriate)
 
 # Next Milestone
 

@@ -25,6 +25,25 @@ Architecture
 - Defined Focus integration.
 - Established the foundations for Daily Review and Smart Planning.
 
+## v0.8.9
+
+Execution Foundation
+
+### Added
+
+- DailyReviewEngine
+- DailyReviewSnapshot models
+- SmartPlanningEngine
+- SmartPlanning models
+- Dependency registration through AppContainer
+
+### Notes
+
+- Daily Review foundation aggregates execution data.
+- Smart Planning generates recommendations only.
+- No automatic data modification.
+- No UI changes.
+
 ## v0.8.8
 
 State-aware Notifications

@@ -12,6 +12,8 @@ import com.zerosepaisa.liferesetos.notifications.NotificationScheduler
 import com.zerosepaisa.liferesetos.progress.ProgressEngine
 import com.zerosepaisa.liferesetos.backup.BackupEngine
 import com.zerosepaisa.liferesetos.data.repository.HabitCompletionRepository
+import com.zerosepaisa.liferesetos.dailyreview.DailyReviewEngine
+import com.zerosepaisa.liferesetos.smartplanning.SmartPlanningEngine
 
 class AppContainer(context: Context) {
 
@@ -50,6 +52,21 @@ class AppContainer(context: Context) {
             goalRepository = goalRepository,
             taskRepository = taskRepository,
             focusSessionRepository = focusSessionRepository
+        )
+    }
+
+    val dailyReviewEngine: DailyReviewEngine by lazy {
+        DailyReviewEngine(
+            taskRepository = taskRepository,
+            focusSessionRepository = focusSessionRepository,
+            habitRepository = habitRepository,
+            habitCompletionRepository = habitCompletionRepository
+        )
+    }
+
+    val smartPlanningEngine: SmartPlanningEngine by lazy {
+        SmartPlanningEngine(
+            taskRepository = taskRepository
         )
     }
 }
