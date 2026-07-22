@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
+import com.zerosepaisa.liferesetos.notifications.TaskNotificationScheduler
 
 enum class FocusStage {
     SELECT_TASK,
@@ -35,6 +36,7 @@ class FocusViewModel(
     private val focusSessionRepository = FocusSessionRepository(
         AppDatabase.getInstance(application).focusSessionDao()
     )
+    private val taskNotificationScheduler = TaskNotificationScheduler(application)
 
     private val _todaysTasks = MutableStateFlow<List<Task>>(emptyList())
     val todaysTasks: StateFlow<List<Task>> = _todaysTasks.asStateFlow()
@@ -84,6 +86,7 @@ class FocusViewModel(
         _selectedTask.value?.let { task ->
             viewModelScope.launch {
                 taskRepository.updateTask(task.copy(status = TaskStatus.IN_PROGRESS))
+                taskNotificationScheduler.cancelForTask(task.id)
             }
         }
 
@@ -160,6 +163,7 @@ class FocusViewModel(
                         status = TaskStatus.COMPLETED
                     )
                 )
+                taskNotificationScheduler.cancelForTask(task.id)
             }
         }
         startOver()

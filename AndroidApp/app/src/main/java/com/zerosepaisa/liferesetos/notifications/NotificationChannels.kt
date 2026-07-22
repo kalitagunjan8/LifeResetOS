@@ -13,6 +13,8 @@ object NotificationChannels {
 
     const val HABIT_REMINDER = "channel_habit_reminder"
 
+    const val TASK_REMINDER = "channel_task_reminder"
+
     fun createAll(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
@@ -56,6 +58,14 @@ object NotificationChannels {
                 "Habit Reminder",
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply { description = "Reminds you to complete a scheduled Habit" }
+        )
+
+        manager.createNotificationChannel(
+            NotificationChannel(
+                TASK_REMINDER,
+                "Task Execution Reminders",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply { description = "Reminds you to start, continue, or wrap up a scheduled Task" }
         )
     }
 }

@@ -75,15 +75,16 @@ Task Lifecycle & Focus Integration
 - Focus auto-start integration
 - Task state management
 
-## 🔄 v0.8.8
+## ✅ v0.8.8
 
 State-aware Notifications
 
-- Start reminder
-- Running reminder
-- End-of-window reminder
+- Pre-start reminder (15 min before)
+- Start reminder + Snooze
+- End-of-window reminder (Start Anyway / Reschedule / Skip)
+- Auto-cancel on Task state change (In Progress / Completed / Skipped / Rescheduled)
 
-## v0.8.9
+## 🔄 v0.8.9
 
 Execution Foundation
 

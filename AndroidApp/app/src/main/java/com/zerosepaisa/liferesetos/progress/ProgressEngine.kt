@@ -12,20 +12,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlin.math.roundToInt
 
-/**
- * The single source of truth for derived/calculated progress metrics
- * (percentages, streaks, aggregates). See ADR-013 for the architectural
- * decision and the concrete definition behind every metric below.
- *
- * ProgressEngine depends only on Repositories, never DAOs — it does no
- * direct Room access. It performs pure calculations over reactive data
- * the Repositories already expose, and re-emits whenever that underlying
- * data changes (Room remains the source of truth, per ADR-009).
- *
- * GoalRepository and MissionRepository are accepted for API symmetry and
- * future use (e.g. Mission title lookups alongside progress), even though
- * the current calculations only need TaskRepository/FocusSessionRepository.
- */
+
 class ProgressEngine(
     private val missionRepository: MissionRepository,
     private val goalRepository: GoalRepository,
@@ -33,10 +20,7 @@ class ProgressEngine(
     private val focusSessionRepository: FocusSessionRepository
 ) {
 
-    /**
-     * Task-scoped intermediate bundle, combined internally before merging
-     * with session data. Not part of the public API.
-     */
+
     private data class TaskMetricsInput(
         val today: List<Task>,
         val week: List<Task>,
@@ -44,20 +28,14 @@ class ProgressEngine(
         val all: List<Task>
     )
 
-    /**
-     * Focus Session-scoped intermediate bundle, combined internally before
-     * merging with task data. Not part of the public API.
-     */
+
     private data class SessionMetricsInput(
         val today: List<FocusSession>,
         val week: List<FocusSession>,
         val all: List<FocusSession>
     )
 
-    /**
-     * Global (not Mission/Goal-scoped) progress metrics. Recomputes
-     * reactively whenever the underlying Tasks or Focus Sessions change.
-     */
+
     fun observeGlobalProgress(): Flow<GlobalProgressSnapshot> {
 
         val taskMetricsFlow: Flow<TaskMetricsInput> = combine(
@@ -93,10 +71,7 @@ class ProgressEngine(
         }
     }
 
-    /**
-     * Progress for a single Mission: completed vs total Tasks across every
-     * Goal that belongs to it (per ADR-013's Mission Progress % definition).
-     */
+
     fun observeMissionProgress(missionId: Long): Flow<MissionProgress> =
         taskRepository.getTasksForMission(missionId).map { tasks ->
             val completed = tasks.count { it.isCompleted }
@@ -108,9 +83,7 @@ class ProgressEngine(
             )
         }
 
-    /**
-     * Progress for a single Goal: completed vs total Tasks under it.
-     */
+
     fun observeGoalProgress(goalId: Long): Flow<GoalProgress> =
         taskRepository.getTasksForGoal(goalId).map { tasks ->
             val completed = tasks.count { it.isCompleted }

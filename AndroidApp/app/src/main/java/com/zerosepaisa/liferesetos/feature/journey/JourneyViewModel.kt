@@ -26,6 +26,7 @@ import com.zerosepaisa.liferesetos.notifications.HabitReminderScheduler
 import com.zerosepaisa.liferesetos.data.local.entity.Task
 import com.zerosepaisa.liferesetos.data.repository.TaskRepository
 import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
+import com.zerosepaisa.liferesetos.notifications.TaskNotificationScheduler
 
 data class JourneyTaskItem(
     val task: Task,
@@ -79,6 +80,8 @@ class JourneyViewModel(
     val habitStreaks: StateFlow<Map<Long, HabitStreak>> = _habitStreaks.asStateFlow()
 
     private val habitReminderScheduler = HabitReminderScheduler(application)
+
+    private val taskNotificationScheduler = TaskNotificationScheduler(application)
 
     private val taskRepository = TaskRepository(
         AppDatabase.getInstance(application).taskDao()
@@ -233,7 +236,7 @@ class JourneyViewModel(
         if (title.isBlank()) return
 
         viewModelScope.launch {
-            taskRepository.saveTask(
+            val taskId = taskRepository.saveTask(
                 Task(
                     goalId = goalId,
                     title = title,
@@ -243,6 +246,7 @@ class JourneyViewModel(
                     estimatedDurationMinutes = estimatedDurationMinutes
                 )
             )
+            taskRepository.getTaskById(taskId)?.let {taskNotificationScheduler.scheduleForTask(it)}
         }
     }
 
@@ -257,33 +261,42 @@ class JourneyViewModel(
         if (newTitle.isBlank()) return
 
         viewModelScope.launch {
-            taskRepository.updateTask(
-                task.copy(
-                    title = newTitle,
-                    scheduledDate = scheduledDate,
-                    startTimeMinutes = startTimeMinutes,
-                    endTimeMinutes = endTimeMinutes,
-                    estimatedDurationMinutes = estimatedDurationMinutes
-                )
+            val updated = task.copy(
+                title = newTitle,
+                scheduledDate = scheduledDate,
+                startTimeMinutes = startTimeMinutes,
+                endTimeMinutes = endTimeMinutes,
+                estimatedDurationMinutes = estimatedDurationMinutes
             )
+            taskRepository.updateTask(updated)
+            if (updated.status == TaskStatus.PLANNED) {
+                taskNotificationScheduler.scheduleForTask(updated)
+            } else {
+                taskNotificationScheduler.cancelForTask(updated.id)
+            }
         }
     }
 
     fun toggleTaskComplete(task: Task) {
         viewModelScope.launch {
-            taskRepository.updateTask(
-                task.copy(
-                    isCompleted = !task.isCompleted,
-                    completedAt = if (!task.isCompleted) System.currentTimeMillis() else null,
-                    status = if (!task.isCompleted) TaskStatus.COMPLETED else TaskStatus.PLANNED
-                )
+            val updated = task.copy(
+                isCompleted = !task.isCompleted,
+                completedAt = if (!task.isCompleted) System.currentTimeMillis() else null,
+                status = if (!task.isCompleted) TaskStatus.COMPLETED else TaskStatus.PLANNED
             )
+            taskRepository.updateTask(updated)
+            if (updated.status == TaskStatus.PLANNED) {
+                taskNotificationScheduler.scheduleForTask(updated)
+            } else {
+                taskNotificationScheduler.cancelForTask(updated.id)
+            }
         }
     }
 
     fun deleteTask(task: Task) {
         viewModelScope.launch {
             taskRepository.deleteTask(task)
+            taskNotificationScheduler.cancelForTask(task.id)
         }
     }
 }

@@ -25,6 +25,23 @@ Architecture
 - Defined Focus integration.
 - Established the foundations for Daily Review and Smart Planning.
 
+## v0.8.8
+
+State-aware Notifications
+
+- Added TaskNotificationScheduler, scheduling three WorkManager one-time notifications per scheduled Task: PRE_START (15 min before start), START (at start, Planned Tasks only), END_WINDOW (15 min before end, Planned Tasks only)
+- Added TaskStageNotificationWorker
+- Added TaskActionReceiver for Snooze (15 min) and Skip actions
+- Extended NotificationChannels with TASK_REMINDER channel
+- Extended NotificationHelper with showTaskPreStart(), showTaskStart(), showTaskEndWindow(), cancelTaskNotifications()
+- Wired scheduling/cancellation into JourneyViewModel, GoalDetailViewModel, TodaysActionsViewModel and FocusViewModel task mutation paths
+- Notifications automatically cancel when a Task leaves Planned (In Progress, Completed, Skipped, Rescheduled) or is deleted
+
+### Not yet done
+
+- No dedicated Reschedule flow — the END_WINDOW notification's Reschedule action currently deep-links into Journey rather than opening a reschedule dialog
+- Existing Tasks created before this milestone are not retroactively scheduled — only Tasks created or edited after this change receive notifications
+
 ## v0.8.7
 
 Task Lifecycle & Focus Integration

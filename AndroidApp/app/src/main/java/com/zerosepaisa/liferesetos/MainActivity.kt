@@ -1,5 +1,3 @@
-// MainActivity.kt (FULL FILE — merged)
-
 package com.zerosepaisa.liferesetos
 
 import android.Manifest
