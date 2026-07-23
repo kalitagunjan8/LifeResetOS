@@ -9,10 +9,13 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.NavGraph.Companion.findStartDestination
 
 @Composable
 fun BottomNavigationBar(
-    navController: NavHostController
+    navController: NavHostController,
+    isNavigationBlocked: Boolean = false,
+    onBlockedNavigationAttempt: (String) -> Unit = {}
 ) {
 
     val items = listOf(
@@ -37,9 +40,16 @@ fun BottomNavigationBar(
 
                 onClick = {
                     if (!selected) {
-                        navController.navigate(item.route) {
-                            popUpTo(0) { inclusive = true }
-                            launchSingleTop = true
+                        if (isNavigationBlocked) {
+                            onBlockedNavigationAttempt(item.route)
+                        } else {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     }
                 },

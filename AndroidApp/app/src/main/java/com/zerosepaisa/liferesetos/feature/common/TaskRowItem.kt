@@ -16,6 +16,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.animation.animateContentSize
 
 
 @Composable
@@ -30,8 +33,10 @@ fun TaskRowItem(
         Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
+            .animateContentSize()
     } else {
         Modifier.fillMaxWidth()
+            .animateContentSize()
     }
 
     Row(
@@ -40,7 +45,11 @@ fun TaskRowItem(
     ) {
         Checkbox(
             checked = task.isCompleted,
-            onCheckedChange = { onToggle() }
+            onCheckedChange = { onToggle() },
+            modifier = Modifier.semantics {
+                contentDescription = "Mark \"${task.title}\" as " +
+                        if (task.isCompleted) "incomplete" else "complete"
+            }
         )
 
         Column {

@@ -11,12 +11,18 @@ import com.zerosepaisa.liferesetos.navigation.bottomnav.BottomNavigationBar
 @Composable
 fun MainScaffold(
     navController: NavHostController,
+    isNavigationBlocked: Boolean = false,
+    onBlockedNavigationAttempt: (String) -> Unit = {},
     content: @Composable (Modifier) -> Unit
 ) {
 
     Scaffold(
         bottomBar = {
-            BottomNavigationBar(navController = navController)
+            BottomNavigationBar(
+                navController = navController,
+                isNavigationBlocked = isNavigationBlocked,
+                onBlockedNavigationAttempt = onBlockedNavigationAttempt
+            )
         }
     ) { innerPadding ->
         content(Modifier.padding(innerPadding))

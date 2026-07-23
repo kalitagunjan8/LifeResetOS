@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zerosepaisa.liferesetos.feature.common.TaskRowItem
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 
 @Composable
 fun TodaysActionsScreen(
@@ -23,7 +25,12 @@ fun TodaysActionsScreen(
 
     val completedCount = tasks.count { it.isCompleted }
     val totalCount = tasks.size
-    val progress = if (totalCount == 0) 0f else completedCount.toFloat() / totalCount.toFloat()
+    val rawProgress = if (totalCount == 0) 0f else completedCount.toFloat() / totalCount.toFloat()
+    val progress by animateFloatAsState(
+        targetValue = rawProgress,
+        animationSpec = tween(durationMillis = 300),
+        label = "todaysActionsProgress"
+    )
 
     LazyColumn(
         modifier = modifier

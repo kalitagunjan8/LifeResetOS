@@ -27,7 +27,7 @@ fun MissionScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
@@ -37,7 +37,8 @@ fun MissionScreen(
         )
 
         Text(
-            text = "Your mission is the direction your life is moving toward."
+            text = "Your mission is the direction your life is moving toward.",
+            style = MaterialTheme.typography.bodyLarge
         )
 
         OutlinedTextField(

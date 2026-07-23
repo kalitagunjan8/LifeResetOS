@@ -24,6 +24,21 @@ import com.zerosepaisa.liferesetos.navigation.bottomnav.BottomNavItem
 import com.zerosepaisa.liferesetos.viewmodel.MainViewModel
 import com.zerosepaisa.liferesetos.feature.mission.MissionScreen
 import com.zerosepaisa.liferesetos.feature.backup.BackupScreen
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.navigation.NavGraph.Companion.findStartDestination
 
 @Composable
 fun AppNavigation(
@@ -32,6 +47,9 @@ fun AppNavigation(
 
     val viewModel: MainViewModel = viewModel()
     val isFirstLaunch by viewModel.isFirstLaunch.collectAsState()
+    var isFocusSessionRunning by remember { mutableStateOf(false) }
+    var endFocusSession by remember { mutableStateOf<() -> Unit>({}) }
+    var pendingBlockedRoute by remember { mutableStateOf<String?>(null) }
 
     NavHost(
         navController = navController,
@@ -51,6 +69,12 @@ fun AppNavigation(
                         }
                     }
                 }
+            }
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
 
@@ -81,7 +105,11 @@ fun AppNavigation(
         }
 
         composable(BottomNavItem.Home.route) {
-            MainScaffold(navController = navController) { modifier ->
+            MainScaffold(
+                navController = navController,
+                isNavigationBlocked = isFocusSessionRunning,
+                onBlockedNavigationAttempt = { route -> pendingBlockedRoute = route }
+            ) { modifier ->
                 HomeScreen(
                     modifier = modifier,
                     onTodaysActionsClick = {
@@ -89,13 +117,20 @@ fun AppNavigation(
                     },
                     onFocusScoreClick = {
                         navController.navigate(Routes.PROGRESS)
+                    },
+                    onActiveGoalsClick = {
+                        navController.navigate(BottomNavItem.Journey.route)
                     }
                 )
             }
         }
 
         composable(BottomNavItem.Journey.route) {
-            MainScaffold(navController = navController) { modifier ->
+            MainScaffold(
+                navController = navController,
+                isNavigationBlocked = isFocusSessionRunning,
+                onBlockedNavigationAttempt = { route -> pendingBlockedRoute = route }
+            ) { modifier ->
                 JourneyScreen(
                     modifier = modifier,
                     onAddGoalClick = {
@@ -109,33 +144,33 @@ fun AppNavigation(
         }
 
         composable(BottomNavItem.Focus.route) {
-            MainScaffold(navController = navController) { modifier ->
+            MainScaffold(
+                navController = navController,
+                isNavigationBlocked = isFocusSessionRunning,
+                onBlockedNavigationAttempt = { route -> pendingBlockedRoute = route }
+            ) { modifier ->
                 FocusScreen(
                     modifier = modifier,
                     onGoToTodaysActions = {
                         navController.navigate(Routes.TODAYS_ACTIONS)
-                    }
+                    },
+                    onRunningStateChanged = { running -> isFocusSessionRunning = running },
+                    onRegisterEndSession = { endFocusSession = it }
                 )
             }
         }
 
-        composable(BottomNavItem.Profile.route) {
-            MainScaffold(navController = navController) { modifier ->
-                ProfileScreen(
-                    modifier = modifier,
-                    onBackupClick = {
-                        navController.navigate(Routes.BACKUP)
-                    }
-                )
-            }
-        }
 
         composable(Routes.BACKUP) {
             BackupScreen()
         }
 
         composable(BottomNavItem.Profile.route) {
-            MainScaffold(navController = navController) { modifier ->
+            MainScaffold(
+                navController = navController,
+                isNavigationBlocked = isFocusSessionRunning,
+                onBlockedNavigationAttempt = { route -> pendingBlockedRoute = route }
+            ) { modifier ->
                 ProfileScreen(
                     modifier = modifier,
                     onBackupClick = {
@@ -198,5 +233,38 @@ fun AppNavigation(
 
         }
 
+    }
+    pendingBlockedRoute?.let { route ->
+        AlertDialog(
+            onDismissRequest = { pendingBlockedRoute = null },
+            title = { Text("Focus session in progress") },
+            text = { Text("Leave anyway? This will end your current session.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        endFocusSession()
+                        val targetRoute = route
+                        pendingBlockedRoute = null
+                        navController.navigate(targetRoute) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Leave")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { pendingBlockedRoute = null }) {
+                    Text("Stay")
+                }
+            }
+        )
     }
 }

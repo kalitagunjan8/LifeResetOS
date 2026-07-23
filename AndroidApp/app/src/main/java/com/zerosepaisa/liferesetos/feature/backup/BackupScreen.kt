@@ -46,15 +46,20 @@ fun BackupScreen(
             title = { Text("Replace all data?") },
             text = { Text("Restoring this backup will delete your current Mission, Goals, Tasks and Focus Sessions and replace them with the backup's data. This cannot be undone.") },
             confirmButton = {
-                TextButton(onClick = {
-                    showRestoreConfirm = false
-                    pendingRestoreUri?.let { viewModel.restoreBackup(it) }
-                }) {
+                Button(
+                    onClick = {
+                        showRestoreConfirm = false
+                        pendingRestoreUri?.let { viewModel.restoreBackup(it) }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
                     Text("Restore")
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showRestoreConfirm = false }) {
+                OutlinedButton(onClick = { showRestoreConfirm = false }) {
                     Text("Cancel")
                 }
             }
@@ -62,7 +67,7 @@ fun BackupScreen(
     }
 
     Column(
-        modifier = modifier.fillMaxSize().padding(24.dp),
+        modifier = modifier.fillMaxSize().padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -90,8 +95,14 @@ fun BackupScreen(
 
         when (val state = uiState) {
             is BackupUiState.InProgress -> CircularProgressIndicator()
-            is BackupUiState.Success -> Text("Backup saved: ${state.fileName}")
-            is BackupUiState.Error -> Text("Backup failed: ${state.message}")
+            is BackupUiState.Success -> Text(
+                "Backup saved: ${state.fileName}",
+                style = MaterialTheme.typography.bodyLarge
+            )
+            is BackupUiState.Error -> Text(
+                "Backup failed: ${state.message}",
+                style = MaterialTheme.typography.bodyLarge
+            )
             is BackupUiState.Idle -> {}
         }
 
@@ -118,8 +129,14 @@ fun BackupScreen(
 
         when (val state = restoreState) {
             is RestoreUiState.InProgress -> CircularProgressIndicator()
-            is RestoreUiState.Success -> Text("Restore complete.")
-            is RestoreUiState.Error -> Text("Restore failed: ${state.message}")
+            is RestoreUiState.Success -> Text(
+                "Restore complete.",
+                style = MaterialTheme.typography.bodyLarge
+            )
+            is RestoreUiState.Error -> Text(
+                "Restore failed: ${state.message}",
+                style = MaterialTheme.typography.bodyLarge
+            )
             is RestoreUiState.Idle -> {}
         }
     }

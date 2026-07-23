@@ -25,14 +25,61 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zerosepaisa.liferesetos.data.local.entity.FocusSession
 import com.zerosepaisa.liferesetos.data.local.entity.Task
 import com.zerosepaisa.liferesetos.data.local.entity.enums.SessionStatus
+import androidx.compose.ui.text.style.TextAlign
+import androidx.activity.compose.BackHandler
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun FocusScreen(
     modifier: Modifier = Modifier,
-    onGoToTodaysActions: () -> Unit = {}
+    onGoToTodaysActions: () -> Unit = {},
+    onRunningStateChanged: (Boolean) -> Unit = {},
+    onRegisterEndSession: (() -> Unit) -> Unit = {}
 ) {
     val viewModel: FocusViewModel = viewModel()
     val stage by viewModel.stage.collectAsState()
+
+    LaunchedEffect(stage) {
+        onRunningStateChanged(stage == FocusStage.RUNNING)
+    }
+
+    LaunchedEffect(Unit) {
+        onRegisterEndSession { viewModel.endEarly() }
+    }
+
+    var showLeaveConfirmation by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = stage == FocusStage.RUNNING) {
+        showLeaveConfirmation = true
+    }
+
+    if (showLeaveConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showLeaveConfirmation = false },
+            title = { Text("Focus session in progress") },
+            text = { Text("Leave anyway? This will end your current session.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.endEarly()
+                        showLeaveConfirmation = false
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Leave")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showLeaveConfirmation = false }) {
+                    Text("Stay")
+                }
+            }
+        )
+    }
     val todaysTasks by viewModel.todaysTasks.collectAsState()
     val selectedTask by viewModel.selectedTask.collectAsState()
     val totalSeconds by viewModel.totalSeconds.collectAsState()
@@ -262,7 +309,11 @@ private fun RunningStage(
         ) {
             Text(
                 text = task.title,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
             )
 
             Text(

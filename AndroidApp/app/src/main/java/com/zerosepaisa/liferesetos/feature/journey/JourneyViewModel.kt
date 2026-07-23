@@ -27,6 +27,7 @@ import com.zerosepaisa.liferesetos.data.local.entity.Task
 import com.zerosepaisa.liferesetos.data.repository.TaskRepository
 import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
 import com.zerosepaisa.liferesetos.notifications.TaskNotificationScheduler
+import com.zerosepaisa.liferesetos.util.DateUtils
 
 data class JourneyTaskItem(
     val task: Task,
@@ -146,11 +147,13 @@ class JourneyViewModel(
                 }
                 .collect { (goals, map) ->
                     _tasksByGoal.value = map
-                    _taskItems.value = goals.flatMap { goal ->
-                        map[goal.id].orEmpty().map { task ->
-                            JourneyTaskItem(task = task, goalId = goal.id, goalTitle = goal.title)
+                    _taskItems.value = sortJourneyTaskItems(
+                        goals.flatMap { goal ->
+                            map[goal.id].orEmpty().map { task ->
+                                JourneyTaskItem(task = task, goalId = goal.id, goalTitle = goal.title)
+                            }
                         }
-                    }
+                    )
                 }
         }
     }
@@ -276,6 +279,21 @@ class JourneyViewModel(
             }
         }
     }
+    /**
+     * Reschedules a Task via the lightweight Journey reschedule picker
+     * (date only). Resets status to PLANNED so the Task re-enters the
+     * normal Planned lifecycle, mirroring updateTask()'s existing pattern.
+     */
+    fun rescheduleTask(task: Task, newScheduledDate: Long) {
+        viewModelScope.launch {
+            val updated = task.copy(
+                scheduledDate = newScheduledDate,
+                status = TaskStatus.PLANNED
+            )
+            taskRepository.updateTask(updated)
+            taskNotificationScheduler.scheduleForTask(updated)
+        }
+    }
 
     fun toggleTaskComplete(task: Task) {
         viewModelScope.launch {
@@ -298,5 +316,32 @@ class JourneyViewModel(
             taskRepository.deleteTask(task)
             taskNotificationScheduler.cancelForTask(task.id)
         }
+    }
+    /**
+     * Orders Journey's flat Task list: Today's Tasks first, then Future
+     * (soonest first), then Past (most recent first), then Unscheduled last.
+     * Scoped to Journey only — Goal Detail and Focus/Today's Actions are
+     * unaffected and keep their own existing ordering.
+     */
+    private fun sortJourneyTaskItems(items: List<JourneyTaskItem>): List<JourneyTaskItem> {
+        val today = DateUtils.startOfToday()
+        return items.sortedWith(
+            compareBy<JourneyTaskItem> { item ->
+                val date = item.task.scheduledDate
+                when {
+                    date == null -> 3
+                    date == today -> 0
+                    date > today -> 1
+                    else -> 2
+                }
+            }.thenBy { item ->
+                val date = item.task.scheduledDate
+                when {
+                    date == null -> 0L
+                    date > today -> date
+                    else -> -date
+                }
+            }
+        )
     }
 }

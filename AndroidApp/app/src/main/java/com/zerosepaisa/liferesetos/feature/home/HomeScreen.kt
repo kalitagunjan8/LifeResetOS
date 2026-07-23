@@ -3,12 +3,20 @@ package com.zerosepaisa.liferesetos.feature.home
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.LocalFireDepartment
+import androidx.compose.material.icons.outlined.TrackChanges
+import androidx.compose.material.icons.outlined.TrendingUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.getValue
@@ -18,7 +26,8 @@ import androidx.compose.runtime.collectAsState
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onTodaysActionsClick: () -> Unit = {},
-    onFocusScoreClick: () -> Unit = {}
+    onFocusScoreClick: () -> Unit = {},
+    onActiveGoalsClick: () -> Unit = {}
 )
 {
     val viewModel: HomeViewModel = viewModel()
@@ -60,23 +69,28 @@ fun HomeScreen(
         )
 
         DashboardCard(
-            title = "🎯 Current Mission",
+            icon = Icons.Outlined.TrackChanges,
+            title = "Mission",
             value = mission?.title ?: "No Mission Yet"
         )
 
         DashboardCard(
-            title = "📈 Active Goals",
-            value = goals.size.toString()
+            icon = Icons.Outlined.TrendingUp,
+            title = "Active Goals",
+            value = goals.size.toString(),
+            onClick = onActiveGoalsClick
         )
 
         DashboardCard(
-            title = "☑ Today's Actions",
+            icon = Icons.Outlined.CheckCircle,
+            title = "Today's Actions",
             value = "$completedCount / $totalCount Completed",
             onClick = onTodaysActionsClick
         )
 
         DashboardCard(
-            title = "🔥 Focus Score",
+            icon = Icons.Outlined.LocalFireDepartment,
+            title = "Focus Score",
             value = focusScoreText,
             onClick = onFocusScoreClick
         )
@@ -87,6 +101,7 @@ fun HomeScreen(
 
 @Composable
 private fun DashboardCard(
+    icon: ImageVector,
     title: String,
     value: String,
     onClick: (() -> Unit)? = null
@@ -110,10 +125,18 @@ private fun DashboardCard(
             modifier = Modifier.padding(20.dp)
         ) {
 
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 

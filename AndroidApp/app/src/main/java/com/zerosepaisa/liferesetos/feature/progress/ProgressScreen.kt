@@ -24,6 +24,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zerosepaisa.liferesetos.progress.GlobalProgressSnapshot
 import com.zerosepaisa.liferesetos.progress.MissionProgress
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.LocalFireDepartment
+import androidx.compose.material.icons.outlined.Link
+import androidx.compose.material.icons.outlined.TrackChanges
+import androidx.compose.material.icons.outlined.TrendingUp
+import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 /**
  * Read-only Progress screen. Every number displayed here comes directly
@@ -78,10 +90,10 @@ fun ProgressScreen(
         }
 
         item {
-            AnalyticsSectionCard(title = "🎯 Goals") {
+            AnalyticsSectionCard(icon = Icons.Outlined.TrackChanges, title = "Goals") {
                 if (goalProgressItems.isEmpty()) {
                     Text(
-                        text = "No active goals.",
+                        text = "No active goals yet. Add one from Journey to start tracking progress.",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 } else {
@@ -106,7 +118,7 @@ private fun OverviewSection(
     progress: GlobalProgressSnapshot,
     missionProgress: MissionProgress?
 ) {
-    AnalyticsSectionCard(title = "📊 Overview") {
+    AnalyticsSectionCard(icon = Icons.Outlined.BarChart, title = "Overview") {
         MetricRow(
             label = "Mission Progress",
             value = missionProgress?.let { "${it.completedTasks} / ${it.totalTasks} · ${it.percent}%" }
@@ -120,7 +132,7 @@ private fun OverviewSection(
 
 @Composable
 private fun FocusSection(progress: GlobalProgressSnapshot) {
-    AnalyticsSectionCard(title = "🔥 Focus") {
+    AnalyticsSectionCard(icon = Icons.Outlined.LocalFireDepartment, title = "Focus") {
         MetricRow(label = "Focus Minutes Today", value = "${progress.focusMinutesToday} min")
         MetricRow(label = "Focus Minutes This Week", value = "${progress.focusMinutesThisWeek} min")
         MetricRow(label = "Average Focus Score", value = "${progress.averageFocusScore}%")
@@ -129,7 +141,7 @@ private fun FocusSection(progress: GlobalProgressSnapshot) {
 
 @Composable
 private fun StreaksSection(progress: GlobalProgressSnapshot) {
-    AnalyticsSectionCard(title = "🔗 Streaks") {
+    AnalyticsSectionCard(icon = Icons.Outlined.Link, title = "Streaks") {
         MetricRow(label = "Current Streak", value = "${progress.currentStreak} days")
         MetricRow(label = "Longest Streak", value = "${progress.longestStreak} days")
     }
@@ -137,7 +149,7 @@ private fun StreaksSection(progress: GlobalProgressSnapshot) {
 
 @Composable
 private fun TotalsSection(progress: GlobalProgressSnapshot) {
-    AnalyticsSectionCard(title = "📈 Totals") {
+    AnalyticsSectionCard(icon = Icons.Outlined.TrendingUp, title = "Totals") {
         MetricRow(label = "Completed Tasks", value = "${progress.totalCompletedTasks}")
         MetricRow(label = "Total Focus Sessions", value = "${progress.totalFocusSessions}")
     }
@@ -150,21 +162,31 @@ private fun TotalsSection(progress: GlobalProgressSnapshot) {
  */
 @Composable
 private fun AnalyticsSectionCard(
+    icon: ImageVector,
     title: String,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
             content()
         }
     }

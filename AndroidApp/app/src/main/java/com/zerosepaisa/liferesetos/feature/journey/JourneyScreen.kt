@@ -52,6 +52,27 @@ import com.zerosepaisa.liferesetos.feature.common.TaskDatePickerField
 import com.zerosepaisa.liferesetos.feature.common.TaskRowItem
 import java.util.Locale
 import com.zerosepaisa.liferesetos.feature.common.TaskTimePickerField
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.material.icons.outlined.TrackChanges
+import androidx.compose.material.icons.outlined.TrendingUp
+import androidx.compose.material.icons.outlined.Repeat
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.animateContentSize
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import com.zerosepaisa.liferesetos.data.local.entity.enums.TaskStatus
+import com.zerosepaisa.liferesetos.feature.common.formatMinutesOfDay
+import com.zerosepaisa.liferesetos.util.DateUtils
+import java.text.SimpleDateFormat
+import java.util.Date
+import androidx.compose.foundation.layout.PaddingValues
 
 @Composable
 fun JourneyScreen(
@@ -70,27 +91,22 @@ fun JourneyScreen(
     var showAddTaskDialog by remember { mutableStateOf(false) }
     var editingTask by remember { mutableStateOf<Task?>(null) }
     var deleteConfirmTask by remember { mutableStateOf<Task?>(null) }
+    var reschedulingTask by remember { mutableStateOf<Task?>(null) }
 
     var showAddHabitDialog by remember { mutableStateOf(false) }
     var editingHabit by remember { mutableStateOf<Habit?>(null) }
     var deleteConfirmHabit by remember { mutableStateOf<Habit?>(null) }
 
-    Scaffold(
-        modifier = modifier,
-        floatingActionButton = {
-            FloatingActionButton(onClick = onAddGoalClick) {
-                Icon(Icons.Filled.Add, contentDescription = "Add Goal")
-            }
-        }
-    ) { innerPadding ->
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(
+            start = 20.dp,
+            end = 20.dp,
+            top = 20.dp,
+            bottom = 32.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
 
             item {
                 Text(
@@ -100,10 +116,7 @@ fun JourneyScreen(
             }
 
             item {
-                Text(
-                    text = "🎯 Mission",
-                    style = MaterialTheme.typography.titleMedium
-                )
+                SectionHeader(icon = Icons.Outlined.TrackChanges, text = "Mission")
                 Text(
                     text = mission?.title ?: "No Mission Yet",
                     style = MaterialTheme.typography.bodyLarge
@@ -111,10 +124,17 @@ fun JourneyScreen(
             }
 
             item {
-                Text(
-                    text = "📈 Goals",
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionHeader(icon = Icons.Outlined.TrendingUp, text = "Goals")
+
+                    IconButton(onClick = onAddGoalClick) {
+                        Icon(Icons.Filled.Add, contentDescription = "Add Goal")
+                    }
+                }
             }
 
             if (goals.isEmpty()) {
@@ -139,10 +159,7 @@ fun JourneyScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "🔁 Habits",
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                    SectionHeader(icon = Icons.Outlined.Repeat, text = "Habits")
 
                     IconButton(onClick = { showAddHabitDialog = true }) {
                         Icon(Icons.Filled.Add, contentDescription = "Add Habit")
@@ -175,10 +192,7 @@ fun JourneyScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "✅ Tasks",
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                    SectionHeader(icon = Icons.Outlined.CheckCircle, text = "Tasks")
 
                     if (goals.isNotEmpty()) {
                         IconButton(onClick = { showAddTaskDialog = true }) {
@@ -207,12 +221,13 @@ fun JourneyScreen(
                     JourneyTaskRow(
                         item = item,
                         onToggle = { viewModel.toggleTaskComplete(item.task) },
-                        onClick = { editingTask = item.task }
+                        onClick = { editingTask = item.task },
+                        onRescheduleClick = { reschedulingTask = item.task }
                     )
                 }
             }
         }
-    }
+
 
     // ---- Task dialogs ----
 
@@ -264,6 +279,16 @@ fun JourneyScreen(
                 OutlinedButton(onClick = { deleteConfirmTask = null }) {
                     Text("Cancel")
                 }
+            }
+        )
+    }
+    reschedulingTask?.let { task ->
+        RescheduleDateDialog(
+            currentDate = task.scheduledDate,
+            onDismiss = { reschedulingTask = null },
+            onConfirm = { newDate ->
+                viewModel.rescheduleTask(task, newDate)
+                reschedulingTask = null
             }
         )
     }
@@ -355,34 +380,173 @@ private fun GoalCard(
     }
 }
 
+@Composable
+private fun SectionHeader(icon: ImageVector, text: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+}
+
 /**
  * Task row for the Journey Workspace's flat Tasks section. Shows which
  * Goal the Task belongs to (since Tasks are no longer nested under their
  * Goal card here), reusing the shared TaskRowItem for the title/checkbox/
  * scheduledDate presentation.
  */
+private enum class TaskDateRelation { TODAY, FUTURE, PAST, UNSCHEDULED }
+
+private fun taskDateRelation(scheduledDate: Long?, today: Long): TaskDateRelation {
+    if (scheduledDate == null) return TaskDateRelation.UNSCHEDULED
+    val day = DateUtils.startOfDay(scheduledDate)
+    return when {
+        day == today -> TaskDateRelation.TODAY
+        day > today -> TaskDateRelation.FUTURE
+        else -> TaskDateRelation.PAST
+    }
+}
+
 @Composable
 private fun JourneyTaskRow(
     item: JourneyTaskItem,
     onToggle: () -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onRescheduleClick: () -> Unit
 ) {
+    val task = item.task
+    val today = remember { DateUtils.startOfToday() }
+    val relation = remember(task.scheduledDate, today) { taskDateRelation(task.scheduledDate, today) }
+    val dateFormat = remember { SimpleDateFormat("EEE, MMM d", Locale.getDefault()) }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(2.dp)
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
             Text(
                 text = item.goalTitle,
                 style = MaterialTheme.typography.labelSmall
             )
-            TaskRowItem(
-                task = item.task,
-                onToggle = onToggle,
-                onClick = onClick
-            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onClick)
+                    .animateContentSize(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                when {
+                    relation == TaskDateRelation.TODAY || relation == TaskDateRelation.UNSCHEDULED -> {
+                        Checkbox(
+                            checked = task.isCompleted,
+                            onCheckedChange = { onToggle() },
+                            modifier = Modifier.semantics {
+                                contentDescription = "Mark \"${task.title}\" as " +
+                                        if (task.isCompleted) "incomplete" else "complete"
+                            }
+                        )
+                    }
+                    relation == TaskDateRelation.PAST && task.isCompleted -> {
+                        Checkbox(
+                            checked = true,
+                            onCheckedChange = null,
+                            enabled = false
+                        )
+                    }
+                    else -> {
+                        Spacer(modifier = Modifier.width(48.dp))
+                    }
+                }
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = task.title,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+
+                    task.scheduledDate?.let { millis ->
+                        Text(
+                            text = dateFormat.format(Date(millis)),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+
+                    val timeRangeText = when {
+                        task.startTimeMinutes != null && task.endTimeMinutes != null ->
+                            "${formatMinutesOfDay(task.startTimeMinutes)} – ${formatMinutesOfDay(task.endTimeMinutes)}"
+                        task.startTimeMinutes != null ->
+                            formatMinutesOfDay(task.startTimeMinutes)
+                        else -> null
+                    }
+
+                    timeRangeText?.let {
+                        Text(text = it, style = MaterialTheme.typography.labelMedium)
+                    }
+
+                    task.estimatedDurationMinutes?.let { minutes ->
+                        Text(
+                            text = "Est. $minutes min",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+
+                    if (task.status == TaskStatus.IN_PROGRESS) {
+                        Text(
+                            text = "In Progress",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
+
+                if (relation == TaskDateRelation.PAST && !task.isCompleted) {
+                    TextButton(onClick = onRescheduleClick) {
+                        Text("Reschedule")
+                    }
+                }
+            }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RescheduleDateDialog(
+    currentDate: Long?,
+    onDismiss: () -> Unit,
+    onConfirm: (Long) -> Unit
+) {
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = currentDate
+    )
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    datePickerState.selectedDateMillis?.let { onConfirm(it) }
+                }
+            ) {
+                Text("Reschedule")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
     }
 }
 
@@ -531,12 +695,17 @@ private fun HabitCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp)
+                .animateContentSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
                 checked = isCompletedToday,
-                onCheckedChange = { onToggleComplete() }
+                onCheckedChange = { onToggleComplete() },
+                modifier = Modifier.semantics {
+                    contentDescription = "Mark \"${habit.title}\" as " +
+                            if (isCompletedToday) "not completed today" else "completed today"
+                }
             )
 
             Column(
